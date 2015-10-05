@@ -1,8 +1,9 @@
-package net.sytes.surfael.androidchat;
+package net.sytes.surfael.androidchat.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -29,6 +30,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import net.sytes.surfael.androidchat.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +41,7 @@ import app.ApiReceiveInterface;
 import app.ApiSendFacade;
 import app.model.clients.Client;
 import app.model.exceptions.LocalException;
+import app.model.exceptions.ServerException;
 import app.model.messages.DisconnectionMessage;
 import app.model.messages.NormalMessage;
 import app.model.messages.ServerMessage;
@@ -62,6 +68,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private LoginActivity lActivity = this;
 
     public Client client;
 
@@ -336,7 +344,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void onReceiveClient(Client client2) {
                 System.out.println(client2.toString());
                 client = client2;
+                Intent intent = new Intent(lActivity, MainActivity.class);
+                intent.putExtra("client", new Gson().toJson(client));
+                startActivity(intent);
+            }
 
+            @Override
+            public void onReceiveServerException(ServerException e) {
+                System.out.println(e.toString());
             }
 
         };
@@ -346,9 +361,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                ApiSendFacade.connect("192.168.2.11" , 2000, apiri);
+                ApiSendFacade.connect("54.232.241.237", 2001, apiri);
                 ApiSendFacade.login(mEmail, mPassword);
-                Thread.sleep(100000);
                 return true;
             } catch (LocalException e) {
                 e.printStackTrace();
@@ -357,20 +371,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 e.printStackTrace();
                 return false;
             }
-//            try {
-//                // Simulate network access.
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                return false;
-//            }
-//
-//            for (String credential : DUMMY_CREDENTIALS) {
-//                String[] pieces = credential.split(":");
-//                if (pieces[0].equals(mEmail)) {
-//                    // Account exists, return true if the password matches.
-//                    return pieces[1].equals(mPassword);
-//                }
-//            }
 
         }
 
@@ -380,7 +380,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
