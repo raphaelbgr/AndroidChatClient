@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +30,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -37,14 +39,16 @@ import net.sytes.surfael.androidchat.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.ApiReceiveInterface;
-import app.ApiSendFacade;
-import app.model.clients.Client;
-import app.model.exceptions.LocalException;
-import app.model.exceptions.ServerException;
-import app.model.messages.DisconnectionMessage;
-import app.model.messages.NormalMessage;
-import app.model.messages.ServerMessage;
+import net.sytes.surfael.api.ApiReceiveInterface;
+import net.sytes.surfael.api.ApiSendFacade;
+import net.sytes.surfael.api.model.clients.Client;
+import net.sytes.surfael.api.model.exceptions.LocalException;
+import net.sytes.surfael.api.model.exceptions.ServerException;
+import net.sytes.surfael.api.model.messages.DisconnectionMessage;
+import net.sytes.surfael.api.model.messages.Message;
+import net.sytes.surfael.api.model.messages.NormalMessage;
+import net.sytes.surfael.api.model.messages.ServerMessage;
+import net.sytes.surfael.data.Session;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -105,7 +109,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
 
         mEmailView.setText("raphaelbgr@gmail.com");
-        mPasswordView.setText("21215300");
+        mPasswordView.setText("12345678");
     }
 
     private void populateAutoComplete() {
@@ -322,36 +326,67 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             @Override
             public void onReceive(Object o) {
-                System.out.println(o.toString());
+                Log.d("server_callback", o.toString());
             }
 
             @Override
             public void onReceiveNormalMessage(NormalMessage normalMessage) {
-                System.out.println(normalMessage.toString());
+                Log.d("server_callback", normalMessage.toString());
             }
 
             @Override
             public void onReceiveDisconnectionMessage(DisconnectionMessage disconnectionMessage) {
-                System.out.println(disconnectionMessage.toString());
+                Log.d("server_callback", disconnectionMessage.toString());
             }
 
             @Override
-            public void onReceiveServerMessage(ServerMessage serverMessage) {
+            public void onReceiveServerMessage(final ServerMessage serverMessage) {
                 System.out.println(serverMessage.toString());
+                lActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Message m = (Message) serverMessage;
+                        if (m.getServresponse() != null) {
+                            Toast.makeText(lActivity, serverMessage.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
             }
 
             @Override
-            public void onReceiveClient(Client client2) {
-                System.out.println(client2.toString());
-                client = client2;
+            public void onReceiveClient(Client client) {
                 Intent intent = new Intent(lActivity, MainActivity.class);
-                intent.putExtra("client", new Gson().toJson(client));
+
+                Log.d("server_callback", client.toString());
+
+                Session.currentUser = client;
+
                 startActivity(intent);
+                lActivity.finish();
             }
 
             @Override
             public void onReceiveServerException(ServerException e) {
-                System.out.println(e.toString());
+                Log.d("server_callback", e.toString());
+            }
+
+            @Override
+            public void onConnectionError(Exception e) {
+                Log.d("server_callback", e.getLocalizedMessage());
+            }
+
+            @Override
+            public void onWelcomeReceived(ServerMessage m) {
+
+            }
+
+            @Override
+            public void onMessageReceived(Message m) {
+
+            }
+
+            @Override
+            public void onUserMessageReceived(Message m) {
+
             }
 
         };
@@ -361,8 +396,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                ApiSendFacade.connect("54.232.241.237", 2001, apiri);
-                ApiSendFacade.login(mEmail, mPassword);
+//                ApiSendFacade.connect("54.232.241.237", 2001, apiri);
+//                ApiSendFacade.connect("54.232.241.237", 2001, apiri, mEmail, mPassword);
+                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
                 return true;
             } catch (LocalException e) {
                 e.printStackTrace();

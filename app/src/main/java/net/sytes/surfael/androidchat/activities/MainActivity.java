@@ -18,10 +18,13 @@ import com.google.gson.Gson;
 
 import net.sytes.surfael.androidchat.R;
 
-import app.model.clients.Client;
+import net.sytes.surfael.api.model.clients.Client;
+import net.sytes.surfael.data.Session;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    Client client = Session.currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +51,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        String clientGson = getIntent().getStringExtra("client");
-        Client client = new Gson().fromJson(clientGson, Client.class);
+//        String clientGson = getIntent().getStringExtra("client");
+//        Client client = new Gson().fromJson(clientGson, Client.class);
 
         TextView mHeader = (TextView)findViewById(R.id.email_drawer);
         mHeader.setText(client.getEmail());
