@@ -51,6 +51,7 @@ public class ApiSendFacade {
 		Client client = new Client(login, password);
 		client.setVersion(Status.VERSION);
 		client.setConnect(true);
+		client.setPlatform(2);
 		ApiSendFacade.send(client);
 		return null;
 	}
