@@ -23,9 +23,6 @@ public interface ApiReceiveInterface {
 
 	public void onConnectionError(Exception e);
 
-	public void onWelcomeReceived(ServerMessage m);
-
-	public void onMessageReceived(Message m);
-
 	public void onUserMessageReceived(Message m);
+
 }

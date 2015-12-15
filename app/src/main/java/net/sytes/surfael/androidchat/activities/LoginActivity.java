@@ -32,8 +32,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import net.sytes.surfael.androidchat.R;
 
 import java.util.ArrayList;
@@ -330,8 +328,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             @Override
-            public void onReceiveNormalMessage(NormalMessage normalMessage) {
+            public void onReceiveNormalMessage(final NormalMessage normalMessage) {
                 Log.d("server_callback", normalMessage.toString());
+                lActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(lActivity, normalMessage.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
             @Override
@@ -341,7 +344,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             @Override
             public void onReceiveServerMessage(final ServerMessage serverMessage) {
-                System.out.println(serverMessage.toString());
                 lActivity.runOnUiThread(new Runnable() {
                     public void run() {
                         Message m = (Message) serverMessage;
@@ -375,16 +377,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             @Override
-            public void onWelcomeReceived(ServerMessage m) {
-
-            }
-
-            @Override
-            public void onMessageReceived(Message m) {
-
-            }
-
-            @Override
             public void onUserMessageReceived(Message m) {
 
             }
@@ -396,8 +388,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                ApiSendFacade.connect("54.232.241.237", 2001, apiri, mEmail, mPassword);
-//                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
+//                ApiSendFacade.connect("54.232.241.237", 2001, apiri, mEmail, mPassword);
+                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
                 return true;
             } catch (LocalException e) {
                 e.printStackTrace();
