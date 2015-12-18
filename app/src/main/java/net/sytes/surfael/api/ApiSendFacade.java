@@ -14,7 +14,10 @@ import net.sytes.surfael.api.model.messages.NormalMessage;
 import net.sytes.surfael.data.Session;
 
 public class ApiSendFacade {
-	
+
+	private static Thread t1;
+	private static ApiReceiveFromServerThread apiReceiver;
+
 	public static boolean send(Object o) {
 		try {
 			new Send(o);
@@ -39,10 +42,15 @@ public class ApiSendFacade {
 	
 	public static void connect(String ip, int port, ApiReceiveInterface apiBridge, String mEmail, String mPassword) throws LocalException, IOException {
 			new Connect(ip, port);
-			Thread t1 = new Thread(new ApiReceiveFromServerThread(apiBridge));
+			apiReceiver = new ApiReceiveFromServerThread(apiBridge);
+			t1 = new Thread(apiReceiver);
 			t1.start();
 			Status.getInstance().setConnected(true);
 			ApiSendFacade.login(mEmail, mPassword);
+	}
+
+	public static void overwriteListener(ApiReceiveInterface newListener) {
+		apiReceiver.overwriteListener(newListener);
 	}
 
 	public static boolean connect(String ip, int port, ApiReceiveInterface apiBridge) throws LocalException {

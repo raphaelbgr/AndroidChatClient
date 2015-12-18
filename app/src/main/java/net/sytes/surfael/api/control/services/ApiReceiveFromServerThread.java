@@ -16,10 +16,10 @@ public class ApiReceiveFromServerThread implements Runnable {
 
 	private ClientStream stream = ClientStream.getInstance();
 	private ApiReceiveInterface api;
+	public static boolean suicide = false;
 
 	@Override
 	public void run() {
-		boolean suicide = false;
 		while (!suicide) {
 			try {
 				final Object o = stream.receiveMessage();
@@ -46,9 +46,14 @@ public class ApiReceiveFromServerThread implements Runnable {
 				api.onConnectionError(e);
 			}
 		}
+		suicide = false;
 	}
 	
 	public ApiReceiveFromServerThread(ApiReceiveInterface apiBridge) {
+		this.api = apiBridge;
+	}
+
+	public void overwriteListener(ApiReceiveInterface apiBridge) {
 		this.api = apiBridge;
 	}
 	
