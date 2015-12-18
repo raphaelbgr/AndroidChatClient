@@ -1,6 +1,7 @@
 package net.sytes.surfael.api;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import net.sytes.surfael.api.control.serverinteraction.Connect;
 import net.sytes.surfael.api.control.serverinteraction.Send;
@@ -8,6 +9,9 @@ import net.sytes.surfael.api.control.services.ApiReceiveFromServerThread;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
 import net.sytes.surfael.api.control.sync.Status;
+import net.sytes.surfael.api.model.messages.Message;
+import net.sytes.surfael.api.model.messages.NormalMessage;
+import net.sytes.surfael.data.Session;
 
 public class ApiSendFacade {
 	
@@ -20,19 +24,25 @@ public class ApiSendFacade {
 		}
 		return true;
 	}
-	
-	public static boolean connect(String ip, int port, ApiReceiveInterface apiBridge, String mEmail, String mPassword) throws LocalException {
+
+	public static boolean sendNormalMessage(String message) {
 		try {
+			NormalMessage nm = new NormalMessage();
+			nm = (NormalMessage) populateMessage(nm, message);
+			new Send(nm);
+		} catch (IOException | LocalException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public static void connect(String ip, int port, ApiReceiveInterface apiBridge, String mEmail, String mPassword) throws LocalException, IOException {
 			new Connect(ip, port);
 			Thread t1 = new Thread(new ApiReceiveFromServerThread(apiBridge));
 			t1.start();
 			Status.getInstance().setConnected(true);
 			ApiSendFacade.login(mEmail, mPassword);
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 	public static boolean connect(String ip, int port, ApiReceiveInterface apiBridge) throws LocalException {
@@ -54,6 +64,14 @@ public class ApiSendFacade {
 		client.setPlatform(2);
 		ApiSendFacade.send(client);
 		return null;
+	}
+
+	private static Message populateMessage(Message m, String string) {
+		m.setOwnerLogin(Session.currentUser.getLogin());
+		m.setCreationtime(Calendar.getInstance().getTimeInMillis());
+		m.setDateString();
+		m.setText(string);
+		return m;
 	}
 	
 }

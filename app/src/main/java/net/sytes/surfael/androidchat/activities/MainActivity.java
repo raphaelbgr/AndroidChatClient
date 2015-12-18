@@ -12,12 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 
 import net.sytes.surfael.androidchat.R;
 
+import net.sytes.surfael.api.ApiSendFacade;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.data.Session;
 
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Client client = Session.currentUser;
+    private FloatingActionButton mSendButton;
+    private EditText mEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,21 @@ public class MainActivity extends AppCompatActivity
 
         TextView mSubtitle = (TextView)findViewById(R.id.name_drawer);
         mSubtitle.setText(client.getName());
+
+        mSendButton = (FloatingActionButton) findViewById(R.id.fab);
+        mEditText = (EditText) findViewById(R.id.editText);
+
+        setSendAction();
+    }
+
+    private void setSendAction() {
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ApiSendFacade.sendNormalMessage(mEditText.getText().toString());
+                mEditText.setText("");
+            }
+        });
     }
 
     @Override

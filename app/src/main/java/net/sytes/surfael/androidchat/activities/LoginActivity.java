@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -74,6 +75,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private LoginActivity lActivity = this;
 
     public Client client;
+    private FloatingActionButton mSendButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -393,9 +395,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return true;
             } catch (LocalException e) {
                 e.printStackTrace();
+                Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 return false;
             } catch (Exception e) {
                 e.printStackTrace();
+                Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 return false;
             }
 
