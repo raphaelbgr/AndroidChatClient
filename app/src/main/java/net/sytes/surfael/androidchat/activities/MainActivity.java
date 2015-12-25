@@ -9,6 +9,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -23,10 +25,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 
 import net.sytes.surfael.androidchat.R;
 
+import net.sytes.surfael.androidchat.adapters.MessagesRecycleAdapter;
+import net.sytes.surfael.androidchat.util.SimpleDividerItemDecoration;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
 import net.sytes.surfael.api.model.clients.Client;
@@ -37,12 +40,18 @@ import net.sytes.surfael.api.model.messages.NormalMessage;
 import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.Session;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Client client = Session.currentUser;
     private FloatingActionButton mSendButton;
     private EditText mEditText;
+    private RecyclerView mRecyclerMessages;
+    private List<Message> messageList;
+    private MessagesRecycleAdapter adapterMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +109,12 @@ public class MainActivity extends AppCompatActivity
                         }
                     });
                 }
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        messageList.add(normalMessage);
+                        adapterMessages.notifyDataSetChanged();
+                    }
+                });
             }
 
             @Override
@@ -140,6 +155,19 @@ public class MainActivity extends AppCompatActivity
 
         };
         ApiSendFacade.overwriteListener(apiri);
+
+        mRecyclerMessages = (RecyclerView) findViewById(R.id.recycler_transactions);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+
+        if (messageList == null) {
+            messageList = new ArrayList<Message>();
+        }
+        adapterMessages = new MessagesRecycleAdapter(messageList, this, getSupportFragmentManager());
+
+        mRecyclerMessages.setAdapter(adapterMessages);
+        mRecyclerMessages.setHasFixedSize(true);
+        mRecyclerMessages.setLayoutManager(layoutManager);
+        mRecyclerMessages.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
     }
 
     private void setSendAction() {
