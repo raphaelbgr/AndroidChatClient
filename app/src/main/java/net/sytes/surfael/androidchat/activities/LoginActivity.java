@@ -375,7 +375,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             @Override
             public void onConnectionError(Exception e) {
-                Log.d("server_callback", e.getLocalizedMessage());
+                if (e.getLocalizedMessage() != null) {
+                    Log.d("server_callback", e.getLocalizedMessage());
+                }
             }
 
             @Override
@@ -390,8 +392,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                ApiSendFacade.connect("54.232.241.237", 2001, apiri, mEmail, mPassword);
-//                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
+//                ApiSendFacade.connect("54.232.241.237", 2001, apiri, mEmail, mPassword);
+                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
                 return true;
             } catch (LocalException e) {
                 e.printStackTrace();

@@ -41,6 +41,7 @@ public class ApiReceiveFromServerThread implements Runnable {
 					api.onReceiveServerException((ServerException) o);
 				}
 			} catch (ClassNotFoundException | IOException e) {
+				Status.getInstance().setConnected(false);
 				e.printStackTrace();
 				suicide = true;
 				api.onConnectionError(e);

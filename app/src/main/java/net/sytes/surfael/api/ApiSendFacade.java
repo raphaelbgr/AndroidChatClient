@@ -41,12 +41,14 @@ public class ApiSendFacade {
 	}
 	
 	public static void connect(String ip, int port, ApiReceiveInterface apiBridge, String mEmail, String mPassword) throws LocalException, IOException {
+		if (!Status.getInstance().isConnected()) {
 			new Connect(ip, port);
-			apiReceiver = new ApiReceiveFromServerThread(apiBridge);
-			t1 = new Thread(apiReceiver);
-			t1.start();
 			Status.getInstance().setConnected(true);
-			ApiSendFacade.login(mEmail, mPassword);
+		}
+		apiReceiver = new ApiReceiveFromServerThread(apiBridge);
+		t1 = new Thread(apiReceiver);
+		t1.start();
+		ApiSendFacade.login(mEmail, mPassword);
 	}
 
 	public static void overwriteListener(ApiReceiveInterface newListener) {

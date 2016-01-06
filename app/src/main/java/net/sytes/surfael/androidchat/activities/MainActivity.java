@@ -146,7 +146,9 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onConnectionError(Exception e) {
-                Log.d("server_callback", e.getLocalizedMessage());
+                if (e.getLocalizedMessage() != null) {
+                    Log.d("server_callback", e.getLocalizedMessage());
+                }
             }
 
             @Override
