@@ -11,7 +11,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:weightSum="1">
 
         <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
             android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
@@ -24,27 +25,24 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_transactions"
-            android:layout_width="match_parent"
-            android:layout_height="450sp"
-            android:background="@color/chat_background"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:scrollIndicators="right"
             android:scrollbarAlwaysDrawVerticalTrack="false"
-            android:soundEffectsEnabled="false" />
-    </LinearLayout>
+            android:soundEffectsEnabled="false"
+            android:layout_marginLeft="16sp"
+            android:layout_marginRight="16sp"
+            android:layout_weight="0.99" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:weightSum="1"
-        android:gravity="bottom">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:weightSum="1"
             android:gravity="right"
-            android:background="@color/chat_background">
+            android:background="@color/chat_background"
+            android:layout_marginLeft="16sp"
+            android:layout_weight="0.01">
 
             <EditText
                 android:layout_height="wrap_content"
@@ -68,6 +66,7 @@
                 android:layout_margin="@dimen/fab_margin"
                 android:src="@android:drawable/ic_dialog_email" />
         </LinearLayout>
+
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
