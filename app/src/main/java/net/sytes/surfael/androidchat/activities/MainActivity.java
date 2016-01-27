@@ -60,14 +60,14 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -78,14 +78,13 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-//        String clientGson = getIntent().getStringExtra("client");
-//        Client client = new Gson().fromJson(clientGson, Client.class);
+        View headerView = navigationView.getHeaderView(0);
 
-        TextView mHeader = (TextView)findViewById(R.id.email_drawer);
-        mHeader.setText(client.getEmail());
+        TextView mHeader = (TextView)headerView.findViewById(R.id.email_drawer);
+        mHeader.setText(Session.currentUser.getEmail());
 
-        TextView mSubtitle = (TextView)findViewById(R.id.name_drawer);
-        mSubtitle.setText(client.getName());
+        TextView mSubtitle = (TextView) headerView.findViewById(R.id.name_drawer);
+        mSubtitle.setText(Session.currentUser.getName());
 
         mSendButton = (FloatingActionButton) findViewById(R.id.fab);
         mEditText = (EditText) findViewById(R.id.editText);

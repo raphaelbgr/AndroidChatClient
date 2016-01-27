@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     public Client client;
     private FloatingActionButton mSendButton;
+    private boolean isPaused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -392,8 +393,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-//                ApiSendFacade.connect("54.232.241.237", 2001, apiri, mEmail, mPassword);
-                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
+                ApiSendFacade.connect("54.232.241.237", 2001, apiri, mEmail, mPassword);
+//                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
                 return true;
             } catch (LocalException e) {
                 e.printStackTrace();
@@ -401,7 +402,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+                if (!isPaused) {
+                    Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
                 return false;
             }
 
@@ -424,6 +428,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    @Override
+    public void onPause() {
+        isPaused = true;
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        isPaused = false;
+        super.onResume();
     }
 }
 
