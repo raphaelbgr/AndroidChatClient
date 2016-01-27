@@ -13,42 +13,4 @@
     android:gravity="bottom"
     android:background="@color/chat_background">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_transactions"
-        android:layout_width="match_parent"
-        android:layout_height="450sp"
-        android:background="@color/chat_background"
-        android:scrollIndicators="right"
-        android:scrollbarAlwaysDrawVerticalTrack="false"
-        android:soundEffectsEnabled="false" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:gravity="right"
-        android:background="@color/chat_background">
-
-        <EditText
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:id="@+id/editText"
-            android:layout_gravity="bottom|left"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:textColor="@color/material_color"
-            android:hint="@string/text_hint"
-            android:textColorHint="@color/material_color"
-            android:hapticFeedbackEnabled="true"
-            android:inputType="textAutoComplete"
-            android:backgroundTint="@color/material_color" />
-
-        <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
-            android:layout_width="55dp" android:layout_height="55dp"
-            android:src="@android:drawable/ic_dialog_email"
-            android:layout_gravity="bottom|right"
-            android:layout_marginBottom="10sp" />
-    </LinearLayout>
-
 </LinearLayout>
