@@ -3,6 +3,7 @@ package net.sytes.surfael.api;
 import java.io.IOException;
 import java.util.Calendar;
 
+import net.sytes.surfael.api.control.classes.MD5;
 import net.sytes.surfael.api.control.serverinteraction.Connect;
 import net.sytes.surfael.api.control.serverinteraction.Send;
 import net.sytes.surfael.api.control.services.ApiReceiveFromServerThread;
@@ -52,6 +53,9 @@ public class ApiSendFacade {
 	}
 
 	public static void overwriteListener(ApiReceiveInterface newListener) {
+		if (apiReceiver == null) {
+			apiReceiver = new ApiReceiveFromServerThread();
+		}
 		apiReceiver.overwriteListener(newListener);
 	}
 
@@ -68,7 +72,7 @@ public class ApiSendFacade {
 	}
 	
 	public static Client login(String login, String password) {
-		Client client = new Client(login, password);
+		Client client = new Client(login, password, true);
 		client.setVersion(Status.VERSION);
 		client.setConnect(true);
 		client.setPlatform(2);

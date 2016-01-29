@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import net.sytes.surfael.api.control.classes.MD5;
 import net.sytes.surfael.api.model.messages.Message;
 
 
@@ -93,6 +94,19 @@ public class Client implements Serializable {
 			this.login = login;
 		}
 		this.password = password;
+	}
+	public Client(String login, String password, boolean crypt) {
+		if (login.contains("@"))
+		{
+			this.email = login;
+		} else {
+			this.login = login;
+		}
+		if (crypt) {
+			this.md5Password = MD5.getMD5(password);
+		} else {
+			this.password = password;
+		}
 	}
 	public Long getId() {
 		return id;

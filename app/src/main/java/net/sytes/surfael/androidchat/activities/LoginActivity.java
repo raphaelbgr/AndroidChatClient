@@ -40,6 +40,7 @@ import java.util.List;
 
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
+import net.sytes.surfael.api.control.classes.MD5;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
 import net.sytes.surfael.api.model.exceptions.ServerException;
@@ -81,36 +82,50 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
+        Session.startHawk(this);
+        client = Session.recoverClient();
+        if (client != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("storedUser", true);
+
+            Session.currentUser = client;
+            Session.storeClient(client);
+
+            startActivity(intent);
+            finish();
+        } else {
+            setContentView(R.layout.activity_login);
+            // Set up the login form.
+            mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+            populateAutoComplete();
+
+            mPasswordView = (EditText) findViewById(R.id.password);
+            mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                    if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                        attemptLogin();
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+            Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+            mEmailSignInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    attemptLogin();
+                }
+            });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+            mLoginFormView = findViewById(R.id.login_form);
+            mProgressView = findViewById(R.id.login_progress);
 
-        mEmailView.setText("raphaelbgr@gmail.com");
-        mPasswordView.setText("12345678");
+//            mEmailView.setText("raphaelbgr@gmail.com");
+//            mPasswordView.setText("12345678");
+        }
     }
 
     private void populateAutoComplete() {
@@ -362,8 +377,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Intent intent = new Intent(lActivity, MainActivity.class);
 
                 Log.d("server_callback", client.toString());
+                client.setMD5Password(MD5.getMD5(mPassword));
 
                 Session.currentUser = client;
+                Session.storeClient(client);
 
                 startActivity(intent);
                 lActivity.finish();
@@ -393,7 +410,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                ApiSendFacade.connect("54.232.241.237", 2001, apiri, mEmail, mPassword);
+                ApiSendFacade.connect(Session.SERVER_IP, Session.SERVER_PORT, apiri, mEmail, mPassword);
 //                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
                 return true;
             } catch (LocalException e) {

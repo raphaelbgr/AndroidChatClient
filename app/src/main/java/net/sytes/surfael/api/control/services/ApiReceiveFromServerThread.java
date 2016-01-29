@@ -54,6 +54,9 @@ public class ApiReceiveFromServerThread implements Runnable {
 		this.api = apiBridge;
 	}
 
+	public ApiReceiveFromServerThread() {
+	}
+
 	public void overwriteListener(ApiReceiveInterface apiBridge) {
 		this.api = apiBridge;
 	}

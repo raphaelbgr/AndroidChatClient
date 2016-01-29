@@ -29,5 +29,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile files('libs/gson-2.2.5.jar')
     compile 'com.android.support:recyclerview-v7:23.1.1'
-    compile 'com.orhanobut:hawk:1.18'
+    compile 'com.github.orhanobut:hawk:1.21'
 }

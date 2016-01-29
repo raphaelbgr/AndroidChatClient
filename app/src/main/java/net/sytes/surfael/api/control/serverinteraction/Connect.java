@@ -11,7 +11,8 @@ public class Connect {
 
 	public Connect(String ip, int port) throws UnknownHostException, IOException {
 		ClientStream stream = ClientStream.getInstance();
-		stream.setSock(new Socket(ip, port));
+		Socket socket = new Socket(ip, port);
+		stream.setSock(socket);
 	}
 	
 	public Connect(Client c) throws UnknownHostException, IOException {

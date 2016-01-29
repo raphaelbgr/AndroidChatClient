@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.orhanobut.hawk.Hawk;
 import com.orhanobut.hawk.HawkBuilder;
+import com.orhanobut.hawk.LogLevel;
 
 import net.sytes.surfael.api.model.clients.Client;
 
@@ -11,23 +12,32 @@ import net.sytes.surfael.api.model.clients.Client;
  * Created by Raphael on 10/12/2015.
  */
 public class Session {
+    public static final String SERVER_IP = "54.232.241.237";
+    public static final int SERVER_PORT = 2001;
     public static Client currentUser;
 
     public static void startHawk(Context context) {
         Hawk.init(context)
                 .setEncryptionMethod(HawkBuilder.EncryptionMethod.NO_ENCRYPTION)
-                .setStorage(HawkBuilder.newSharedPrefStorage(context))
+//                .setStorage(HawkBuilder.newSharedPrefStorage(context))
+                .setStorage(HawkBuilder.newSqliteStorage(context))
+                .setLogLevel(LogLevel.FULL)
                 .build();
     }
 
-    public static void updateClient() {
+    public static void storeClient(Client client) {
+        ClientProxy clientProxy = new ClientProxy(client);
+
         Hawk.remove("currentUser");
-        Hawk.put("currentUser", Session.currentUser);
+        Hawk.put("currentUser", clientProxy);
     }
 
-    public static Client recoverSession() {
+    public static Client recoverClient() {
         if (Hawk.contains("currentUser")) {
-            return (Client) Hawk.get("currentUser");
+            ClientProxy clientProxy = Hawk.get("currentUser");
+            Client client = clientProxy.buildClient(clientProxy);
+
+            return client;
         } else return null;
     }
 }
