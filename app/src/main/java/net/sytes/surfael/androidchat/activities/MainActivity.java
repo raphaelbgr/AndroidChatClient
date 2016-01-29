@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -176,8 +177,16 @@ public class MainActivity extends AppCompatActivity
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ApiSendFacade.sendNormalMessage(mEditText.getText().toString());
-                mEditText.setText("");
+                String text = mEditText.getText().toString();
+                if (text.trim().equals("")) {
+                    Snackbar snackbar = Snackbar.make(getCurrentFocus(), "Please, type in a message", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null);
+                    snackbar.setActionTextColor(Color.MAGENTA);
+                    snackbar.show();
+                } else {
+                    ApiSendFacade.sendNormalMessage(text);
+                    mEditText.setText("");
+                }
             }
         });
     }
