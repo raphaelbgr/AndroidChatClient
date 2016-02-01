@@ -410,7 +410,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                ApiSendFacade.connect(Session.SERVER_IP, Session.SERVER_PORT, apiri, mEmail, mPassword);
+                ApiSendFacade.connect(Session.SERVER_IP, Session.SERVER_PORT, apiri, mEmail, mPassword, true);
 //                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
                 return true;
             } catch (LocalException e) {

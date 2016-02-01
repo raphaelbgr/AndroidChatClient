@@ -41,7 +41,7 @@ public class ApiSendFacade {
 		return true;
 	}
 	
-	public static void connect(String ip, int port, ApiReceiveInterface apiBridge, String mEmail, String mPassword) throws LocalException, IOException {
+	public static void connect(String ip, int port, ApiReceiveInterface apiBridge, String mEmail, String mPassword, boolean crypt) throws LocalException, IOException {
 		if (!Status.getInstance().isConnected()) {
 			new Connect(ip, port);
 			Status.getInstance().setConnected(true);
@@ -49,16 +49,16 @@ public class ApiSendFacade {
 		apiReceiver = new ApiReceiveFromServerThread(apiBridge);
 		t1 = new Thread(apiReceiver);
 		t1.start();
-		ApiSendFacade.login(mEmail, mPassword);
+		ApiSendFacade.login(mEmail, mPassword, crypt);
 	}
 
-	public static void aSyncConnect(final String ip, final int port, final ApiReceiveInterface apiBridge, final String mEmail, final String mPassword) throws LocalException, IOException {
+	public static void aSyncConnect(final String ip, final int port, final ApiReceiveInterface apiBridge, final String mEmail, final String mPassword, final boolean crypt) throws LocalException, IOException {
 		Thread t1 = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					connect(ip, port, apiBridge, mEmail, mPassword);
+					connect(ip, port, apiBridge, mEmail, mPassword, crypt);
 				} catch (LocalException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -101,8 +101,8 @@ public class ApiSendFacade {
 		}
 	}
 	
-	public static Client login(String login, String password) {
-		Client client = new Client(login, password, true);
+	public static Client login(String login, String password, boolean crypt) {
+		Client client = new Client(login, password, crypt);
 		client.setVersion(Status.VERSION);
 		client.setConnect(true);
 		client.setPlatform(2);

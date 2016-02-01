@@ -378,7 +378,7 @@ public class MainActivity extends AppCompatActivity
         };
 
         try {
-            ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri, Session.currentUser.getEmail(), Session.currentUser.getMD5Password());
+            ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri, Session.currentUser.getEmail(), Session.currentUser.getMD5Password(), false);
 //                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
         } catch (LocalException e) {
             e.printStackTrace();
