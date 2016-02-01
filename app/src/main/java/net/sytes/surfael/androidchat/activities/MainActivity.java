@@ -322,9 +322,19 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onReceiveNormalMessage(final NormalMessage normalMessage) {
                 Log.d("server_callback", normalMessage.toString());
-                actitivy.runOnUiThread(new Runnable() {
+                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(Session.currentUser.getLogin())) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), normalMessage.toString(), Toast.LENGTH_LONG).show();
+                            notificateUser(normalMessage.getOwnerName(), normalMessage.getText());
+                        }
+                    });
+                }
+                runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(actitivy, normalMessage.toString(), Toast.LENGTH_LONG).show();
+                        messageList.add(normalMessage);
+                        adapterMessages.notifyDataSetChanged();
+                        mRecyclerMessages.smoothScrollToPosition(adapterMessages.getItemCount());
                     }
                 });
             }
