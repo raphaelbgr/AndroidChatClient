@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 String text = mEditText.getText().toString();
                 if (text.trim().equals("")) {
-                    Snackbar snackbar = Snackbar.make(getCurrentFocus(), "Please, type in a message", Snackbar.LENGTH_LONG)
+                    Snackbar snackbar = Snackbar.make(mEditText, "Please, type in a message", Snackbar.LENGTH_LONG)
                         .setAction("Action", null);
                     snackbar.setActionTextColor(Color.MAGENTA);
                     snackbar.show();
@@ -359,7 +360,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onReceiveClient(Client client) {
                 Log.d("server_callback", client.toString());
-                Snackbar snackbar = Snackbar.make(getCurrentFocus(), "Connected.", Snackbar.LENGTH_LONG)
+                Snackbar snackbar = Snackbar.make(mSendButton, "Connected.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null);
                 snackbar.setActionTextColor(Color.MAGENTA);
                 snackbar.show();
