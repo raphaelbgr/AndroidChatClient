@@ -52,11 +52,41 @@ public class ApiSendFacade {
 		ApiSendFacade.login(mEmail, mPassword);
 	}
 
+	public static void aSyncConnect(final String ip, final int port, final ApiReceiveInterface apiBridge, final String mEmail, final String mPassword) throws LocalException, IOException {
+		Thread t1 = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					connect(ip, port, apiBridge, mEmail, mPassword);
+				} catch (LocalException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t1.start();
+	}
+
 	public static void overwriteListener(ApiReceiveInterface newListener) {
 		if (apiReceiver == null) {
 			apiReceiver = new ApiReceiveFromServerThread();
 		}
 		apiReceiver.overwriteListener(newListener);
+	}
+
+	public static void killService() {
+		apiReceiver.killThread();
+	}
+
+	public static void startService() throws LocalException {
+		if (apiReceiver == null) {
+			throw new LocalException("No listener found, use overwriteListener()");
+		} else {
+			t1 = new Thread(apiReceiver);
+			t1.start();
+		}
 	}
 
 	public static boolean connect(String ip, int port, ApiReceiveInterface apiBridge) throws LocalException {

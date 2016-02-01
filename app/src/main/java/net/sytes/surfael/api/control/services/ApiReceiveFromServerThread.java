@@ -16,7 +16,7 @@ public class ApiReceiveFromServerThread implements Runnable {
 
 	private ClientStream stream = ClientStream.getInstance();
 	private ApiReceiveInterface api;
-	public static boolean suicide = false;
+	private boolean suicide = false;
 
 	@Override
 	public void run() {
@@ -59,6 +59,10 @@ public class ApiReceiveFromServerThread implements Runnable {
 
 	public void overwriteListener(ApiReceiveInterface apiBridge) {
 		this.api = apiBridge;
+	}
+
+	public void killThread() {
+		suicide = true;
 	}
 	
 }

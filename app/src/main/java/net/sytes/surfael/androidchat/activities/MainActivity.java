@@ -62,11 +62,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-
-        stored = bundle.getBoolean("storedUser");
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,10 +88,6 @@ public class MainActivity extends AppCompatActivity
 
         setSendAction();
 
-        if (!stored) {
-            buildApiListener();
-        }
-
         mRecyclerMessages = (RecyclerView) findViewById(R.id.recycler_transactions);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -109,6 +100,15 @@ public class MainActivity extends AppCompatActivity
         mRecyclerMessages.setHasFixedSize(true);
         mRecyclerMessages.setLayoutManager(layoutManager);
         mRecyclerMessages.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
+
+        if (getIntent().getExtras() != null) {
+            Intent intent = getIntent();
+            Bundle bundle = intent.getExtras();
+            stored = bundle.getBoolean("storedUser");
+            if (!stored) {
+                buildApiListener();
+            }
+        }
     }
 
     private void setSendAction() {
@@ -223,6 +223,10 @@ public class MainActivity extends AppCompatActivity
 
         if (stored) {
             loginApi();
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -298,7 +302,13 @@ public class MainActivity extends AppCompatActivity
             }
 
         };
-        ApiSendFacade.overwriteListener(apiri);
+
+        try {
+            ApiSendFacade.overwriteListener(apiri);
+            ApiSendFacade.startService();
+        } catch (LocalException e) {
+            e.printStackTrace();
+        }
     }
 
     private void  loginApi() {
@@ -368,7 +378,7 @@ public class MainActivity extends AppCompatActivity
         };
 
         try {
-            ApiSendFacade.connect(Session.SERVER_IP, Session.SERVER_PORT, apiri, Session.currentUser.getEmail(), Session.currentUser.getMD5Password());
+            ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri, Session.currentUser.getEmail(), Session.currentUser.getMD5Password());
 //                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
         } catch (LocalException e) {
             e.printStackTrace();
