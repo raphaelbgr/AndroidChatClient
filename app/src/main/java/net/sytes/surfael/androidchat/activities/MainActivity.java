@@ -1,6 +1,5 @@
 package net.sytes.surfael.androidchat.activities;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,7 +12,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,16 +29,12 @@ import android.widget.Toast;
 import net.sytes.surfael.androidchat.R;
 
 import net.sytes.surfael.androidchat.adapters.MessagesRecycleAdapter;
+import net.sytes.surfael.androidchat.classes.H_ApiReceiver;
 import net.sytes.surfael.androidchat.util.SimpleDividerItemDecoration;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
-import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
-import net.sytes.surfael.api.model.exceptions.ServerException;
-import net.sytes.surfael.api.model.messages.DisconnectionMessage;
 import net.sytes.surfael.api.model.messages.Message;
-import net.sytes.surfael.api.model.messages.NormalMessage;
-import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.Session;
 
 import java.util.ArrayList;
@@ -49,11 +43,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FloatingActionButton mSendButton;
+    public FloatingActionButton mSendButton;
     private EditText mEditText;
-    private RecyclerView mRecyclerMessages;
-    private List<Message> messageList;
-    private MessagesRecycleAdapter adapterMessages;
+    public RecyclerView mRecyclerMessages;
+    public List<Message> messageList;
+    public MessagesRecycleAdapter adapterMessages;
     private boolean isPaused;
     private ApiReceiveInterface apiri;
     private boolean stored;
@@ -187,7 +181,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void notificateUser(String title, String message) {
+    public void notificateUser(String title, String message) {
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.side_nav_bar)
@@ -238,71 +232,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void buildApiListener() {
-        apiri = new ApiReceiveInterface() {
-            @Override
-            public void onReceive(Object o) {
-                Log.d("server_callback", o.toString());
-            }
-
-            @Override
-            public void onReceiveNormalMessage(final NormalMessage normalMessage) {
-                Log.d("server_callback", normalMessage.toString());
-                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(Session.currentUser.getLogin())) {
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), normalMessage.toString(), Toast.LENGTH_LONG).show();
-                            notificateUser(normalMessage.getOwnerName(), normalMessage.getText());
-                        }
-                    });
-                }
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        messageList.add(normalMessage);
-                        adapterMessages.notifyDataSetChanged();
-                        mRecyclerMessages.smoothScrollToPosition(adapterMessages.getItemCount());
-                    }
-                });
-            }
-
-            @Override
-            public void onReceiveDisconnectionMessage(DisconnectionMessage disconnectionMessage) {
-                Log.d("server_callback", disconnectionMessage.toString());
-            }
-
-            @Override
-            public void onReceiveServerMessage(final ServerMessage serverMessage) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Message m = (Message) serverMessage;
-                        if (m.getServresponse() != null) {
-                            Toast.makeText(getApplicationContext(), serverMessage.toString(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onReceiveClient(Client client) {
-                Log.d("server_callback", client.toString());
-            }
-            @Override
-            public void onReceiveServerException(ServerException e) {
-                Log.d("server_callback", e.toString());
-            }
-
-            @Override
-            public void onConnectionError(Exception e) {
-                if (e.getLocalizedMessage() != null) {
-                    Log.d("server_callback", e.getLocalizedMessage());
-                }
-            }
-
-            @Override
-            public void onUserMessageReceived(Message m) {
-                Log.d("server_callback", m.toString());
-            }
-
-        };
+        apiri = H_ApiReceiver.buildApiCallbackForChatMessagesWithoutLogin(this);
 
         try {
             ApiSendFacade.overwriteListener(apiri);
@@ -312,81 +242,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void  loginApi() {
-        final Activity actitivy = this;
-        apiri = new ApiReceiveInterface() {
-            @Override
-            public void onReceive(Object o) {
-                Log.d("server_callback", o.toString());
-            }
-
-            @Override
-            public void onReceiveNormalMessage(final NormalMessage normalMessage) {
-                Log.d("server_callback", normalMessage.toString());
-                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(Session.currentUser.getLogin())) {
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), normalMessage.toString(), Toast.LENGTH_LONG).show();
-                            notificateUser(normalMessage.getOwnerName(), normalMessage.getText());
-                        }
-                    });
-                }
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        messageList.add(normalMessage);
-                        adapterMessages.notifyDataSetChanged();
-                        mRecyclerMessages.smoothScrollToPosition(adapterMessages.getItemCount());
-                    }
-                });
-            }
-
-            @Override
-            public void onReceiveDisconnectionMessage(DisconnectionMessage disconnectionMessage) {
-                Log.d("server_callback", disconnectionMessage.toString());
-            }
-
-            @Override
-            public void onReceiveServerMessage(final ServerMessage serverMessage) {
-                actitivy.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Message m = (Message) serverMessage;
-                        if (m.getServresponse() != null) {
-                            Toast.makeText(actitivy, serverMessage.toString(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onReceiveClient(Client client) {
-                Log.d("server_callback", client.toString());
-                Snackbar snackbar = Snackbar.make(mSendButton, "Connected.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null);
-                snackbar.setActionTextColor(Color.MAGENTA);
-                snackbar.show();
-
-                Session.currentUser = client;
-                Session.storeClient(client);
-            }
-
-            @Override
-            public void onReceiveServerException(ServerException e) {
-                Log.d("server_callback", e.toString());
-            }
-
-            @Override
-            public void onConnectionError(Exception e) {
-                if (e.getLocalizedMessage() != null) {
-                    Log.d("server_callback", e.getLocalizedMessage());
-                }
-            }
-
-            @Override
-            public void onUserMessageReceived(Message m) {
-
-            }
-
-        };
+    private void loginApi() {
+        apiri = H_ApiReceiver.buildApiCallbackForChatMessagesWithLogin(this);
 
         try {
             ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri, Session.currentUser.getEmail(), Session.currentUser.getMD5Password(), false);
