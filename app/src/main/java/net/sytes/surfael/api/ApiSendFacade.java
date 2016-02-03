@@ -53,20 +53,22 @@ public class ApiSendFacade {
 	}
 
 	public static void aSyncConnect(final String ip, final int port, final ApiReceiveInterface apiBridge, final String mEmail, final String mPassword, final boolean crypt) throws LocalException, IOException {
-		Thread t1 = new Thread(new Runnable() {
+		if (!Status.getInstance().isConnected()) {
+			Thread t1 = new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				try {
-					connect(ip, port, apiBridge, mEmail, mPassword, crypt);
-				} catch (LocalException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+				@Override
+				public void run() {
+					try {
+						connect(ip, port, apiBridge, mEmail, mPassword, crypt);
+					} catch (LocalException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
-		t1.start();
+			});
+			t1.start();
+		}
 	}
 
 	public static void overwriteListener(ApiReceiveInterface newListener) {
@@ -80,16 +82,20 @@ public class ApiSendFacade {
 		apiReceiver.killThread();
 	}
 
-	public static void startService() throws LocalException {
+	private static void startService() throws LocalException {
 		if (apiReceiver == null) {
 			throw new LocalException("No listener found, use overwriteListener()");
-		} else {
-			t1 = new Thread(apiReceiver);
-			t1.start();
+		} else if (Status.getInstance().isConnected()){
+			killService();
 		}
+		t1 = new Thread(apiReceiver);
+		t1.start();
 	}
 
 	public static boolean connect(String ip, int port, ApiReceiveInterface apiBridge) throws LocalException {
+		if (Status.getInstance().isConnected()){
+			killService();
+		}
 		try {
 			new Connect(ip, port);
 			Thread t1 = new Thread(new ApiReceiveFromServerThread(apiBridge));

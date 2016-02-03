@@ -1,5 +1,6 @@
 package net.sytes.surfael.androidchat.activities;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -37,6 +38,7 @@ import net.sytes.surfael.api.model.exceptions.LocalException;
 import net.sytes.surfael.api.model.messages.Message;
 import net.sytes.surfael.data.Session;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,15 +97,6 @@ public class MainActivity extends AppCompatActivity
         mRecyclerMessages.setHasFixedSize(true);
         mRecyclerMessages.setLayoutManager(layoutManager);
         mRecyclerMessages.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
-
-        if (getIntent().getExtras() != null) {
-            Intent intent = getIntent();
-            Bundle bundle = intent.getExtras();
-            stored = bundle.getBoolean("storedUser");
-            if (!stored) {
-                buildApiListener();
-            }
-        }
     }
 
     private void setSendAction() {
@@ -184,31 +177,33 @@ public class MainActivity extends AppCompatActivity
     public void notificateUser(String title, String message) {
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.side_nav_bar)
+                        .setSmallIcon(R.drawable.sym_action_chat)
                         .setContentTitle(title)
-                        .setContentText(message);
+                        .setContentText(message)
+                        .setDefaults(Notification.DEFAULT_ALL);
+
 // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MainActivity.class);
+//        Intent resultIntent = new Intent(this, MainActivity.class);
 
 // The stack builder object will contain an artificial back stack for the
 // started Activity.
 // This ensures that navigating backward from the Activity leads out of
 // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainActivity.class);
+//        stackBuilder.addParentStack(MainActivity.class);
 // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        stackBuilder.addNextIntent(resultIntent);
+//        PendingIntent resultPendingIntent =
+//                stackBuilder.getPendingIntent(
+//                        0,
+//                        PendingIntent.FLAG_UPDATE_CURRENT
+//                );
+//        mBuilder.setContentIntent(resultPendingIntent);
+//        NotificationManager mNotificationManager =
+//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 // mId allows you to update the notification later on.
-        mNotificationManager.notify(1, mBuilder.build());
+//        mNotificationManager.notify(1, mBuilder.build());
     }
 
     @Override
@@ -216,13 +211,21 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         isPaused = false;
 
-        if (stored) {
-            loginApi();
-        } else {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
+        if (getIntent().getExtras() != null) {
+            Intent intent = getIntent();
+            Bundle bundle = intent.getExtras();
+            stored = bundle.getBoolean("storedUser");
+            if (stored || Session.recoverClient() != null) {
+                buildApiListenerWithoutLogin();
+            } else {
+                if (Session.recoverClient() == null) {
+                    intent = new Intent(this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
         }
+
     }
 
     @Override
@@ -231,29 +234,20 @@ public class MainActivity extends AppCompatActivity
         isPaused = true;
     }
 
-    private void buildApiListener() {
+    private void buildApiListenerWithoutLogin() {
         apiri = H_ApiReceiver.buildApiCallbackForChatMessagesWithoutLogin(this);
 
         try {
             ApiSendFacade.overwriteListener(apiri);
-            ApiSendFacade.startService();
-        } catch (LocalException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loginApi() {
-        apiri = H_ApiReceiver.buildApiCallbackForChatMessagesWithLogin(this);
-
-        try {
             ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri, Session.currentUser.getEmail(), Session.currentUser.getMD5Password(), false);
-//                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
+//            ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
         } catch (LocalException e) {
             e.printStackTrace();
-            Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
+            if (!isPaused) {
+                Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        } catch (IOException e) {
             e.printStackTrace();
-
             if (!isPaused) {
                 Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
