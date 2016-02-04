@@ -3,13 +3,13 @@ package net.sytes.surfael.androidchat.activities;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -75,10 +75,10 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
 
         TextView mHeader = (TextView)headerView.findViewById(R.id.email_drawer);
-        mHeader.setText(Session.currentUser.getEmail());
+        mHeader.setText(Session.getCurrentUser().getEmail());
 
         TextView mSubtitle = (TextView) headerView.findViewById(R.id.name_drawer);
-        mSubtitle.setText(Session.currentUser.getName());
+        mSubtitle.setText(Session.getCurrentUser().getName());
 
         mSendButton = (FloatingActionButton) findViewById(R.id.fab);
         mEditText = (EditText) findViewById(R.id.editText);
@@ -183,27 +183,27 @@ public class MainActivity extends AppCompatActivity
                         .setDefaults(Notification.DEFAULT_ALL);
 
 // Creates an explicit intent for an Activity in your app
-//        Intent resultIntent = new Intent(this, MainActivity.class);
+        Intent resultIntent = new Intent(this, MainActivity.class);
 
 // The stack builder object will contain an artificial back stack for the
 // started Activity.
 // This ensures that navigating backward from the Activity leads out of
 // your application to the Home screen.
-//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 // Adds the back stack for the Intent (but not the Intent itself)
-//        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addParentStack(MainActivity.class);
 // Adds the Intent that starts the Activity to the top of the stack
-//        stackBuilder.addNextIntent(resultIntent);
-//        PendingIntent resultPendingIntent =
-//                stackBuilder.getPendingIntent(
-//                        0,
-//                        PendingIntent.FLAG_UPDATE_CURRENT
-//                );
-//        mBuilder.setContentIntent(resultPendingIntent);
-//        NotificationManager mNotificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 // mId allows you to update the notification later on.
-//        mNotificationManager.notify(1, mBuilder.build());
+        mNotificationManager.notify(1, mBuilder.build());
     }
 
     @Override
@@ -215,10 +215,10 @@ public class MainActivity extends AppCompatActivity
             Intent intent = getIntent();
             Bundle bundle = intent.getExtras();
             stored = bundle.getBoolean("storedUser");
-            if (stored || Session.recoverClient() != null) {
+            if (stored || Session.getCurrentUser() != null) {
                 buildApiListenerWithoutLogin();
             } else {
-                if (Session.recoverClient() == null) {
+                if (Session.getCurrentUser() == null) {
                     intent = new Intent(this, LoginActivity.class);
                     startActivity(intent);
                     finish();
@@ -239,7 +239,8 @@ public class MainActivity extends AppCompatActivity
 
         try {
             ApiSendFacade.overwriteListener(apiri);
-            ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri, Session.currentUser.getEmail(), Session.currentUser.getMD5Password(), false);
+            ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri,
+                    Session.getCurrentUser().getEmail(), Session.getCurrentUser().getMD5Password(), false);
 //            ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
         } catch (LocalException e) {
             e.printStackTrace();

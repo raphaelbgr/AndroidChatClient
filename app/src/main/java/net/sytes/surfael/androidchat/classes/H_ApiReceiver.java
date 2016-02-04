@@ -1,6 +1,5 @@
 package net.sytes.surfael.androidchat.classes;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -32,7 +31,7 @@ public class H_ApiReceiver {
             @Override
             public void onReceiveNormalMessage(final NormalMessage normalMessage) {
                 Log.d("server_callback", normalMessage.toString());
-                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(Session.currentUser.getLogin())) {
+                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(Session.getCurrentUser().getLogin())) {
                     context.runOnUiThread(new Runnable() {
                         public void run() {
 //                            Toast.makeText(context, normalMessage.toString(), Toast.LENGTH_LONG).show();
@@ -74,8 +73,7 @@ public class H_ApiReceiver {
                 snackbar.setActionTextColor(Color.MAGENTA);
                 snackbar.show();
 
-                Session.currentUser = client;
-                Session.storeClient(client);
+                Session.setCurrentUser(client);
             }
 
             @Override
@@ -109,10 +107,10 @@ public class H_ApiReceiver {
             @Override
             public void onReceiveNormalMessage(final NormalMessage normalMessage) {
                 Log.d("server_callback", normalMessage.toString());
-                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(Session.currentUser.getLogin())) {
+                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(Session.getCurrentUser().getLogin())) {
                     context.runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(context, normalMessage.toString(), Toast.LENGTH_LONG).show();
+//                            Toast.makeText(context, normalMessage.toString(), Toast.LENGTH_LONG).show();
                             context.notificateUser(normalMessage.getOwnerName(), normalMessage.getText());
                         }
                     });

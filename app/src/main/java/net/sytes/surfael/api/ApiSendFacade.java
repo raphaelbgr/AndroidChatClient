@@ -117,7 +117,7 @@ public class ApiSendFacade {
 	}
 
 	private static Message populateMessage(Message m, String string) {
-		m.setOwnerLogin(Session.currentUser.getLogin());
+		m.setOwnerLogin(Session.getCurrentUser().getLogin());
 		m.setCreationtime(Calendar.getInstance().getTimeInMillis());
 		m.setDateString();
 		m.setText(string);

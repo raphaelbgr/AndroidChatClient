@@ -84,13 +84,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
 
         Session.startHawk(this);
-        client = Session.recoverClient();
+        client = Session.getCurrentUser();
         if (client != null) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("storedUser", true);
 
-            Session.currentUser = client;
-            Session.storeClient(client);
+            Session.setCurrentUser(client);
 
             startActivity(intent);
             finish();
@@ -379,8 +378,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d("server_callback", client.toString());
                 client.setMD5Password(MD5.getMD5(mPassword));
 
-                Session.currentUser = client;
-                Session.storeClient(client);
+                Session.setCurrentUser(client);
 
                 startActivity(intent);
                 lActivity.finish();

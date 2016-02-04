@@ -14,7 +14,7 @@ import net.sytes.surfael.api.model.clients.Client;
 public class Session {
     public static final String SERVER_IP = "54.232.241.237";
     public static final int SERVER_PORT = 2001;
-    public static Client currentUser;
+    private static Client currentUser;
 
     public static void startHawk(Context context) {
         Hawk.init(context)
@@ -25,19 +25,22 @@ public class Session {
                 .build();
     }
 
-    public static void storeClient(Client client) {
+    public static void setCurrentUser(Client client) {
         ClientProxy clientProxy = new ClientProxy(client);
+        currentUser = client;
 
         Hawk.remove("currentUser");
         Hawk.put("currentUser", clientProxy);
     }
 
-    public static Client recoverClient() {
-        if (Hawk.contains("currentUser")) {
-            ClientProxy clientProxy = Hawk.get("currentUser");
-            Client client = clientProxy.buildClient(clientProxy);
+    public static Client getCurrentUser() {
+        if (currentUser == null) {
+            if (Hawk.contains("currentUser")) {
+                ClientProxy clientProxy = Hawk.get("currentUser");
+                Client client = clientProxy.buildClient(clientProxy);
 
-            return client;
-        } else return null;
+                return client;
+            } else return null;
+        } else return currentUser;
     }
 }
