@@ -45,11 +45,12 @@ public class ApiSendFacade {
 		if (!Status.getInstance().isConnected()) {
 			new Connect(ip, port);
 			Status.getInstance().setConnected(true);
+			ApiSendFacade.login(mEmail, mPassword, crypt);
 		}
 		apiReceiver = new ApiReceiveFromServerThread(apiBridge);
 		t1 = new Thread(apiReceiver);
 		t1.start();
-		ApiSendFacade.login(mEmail, mPassword, crypt);
+
 	}
 
 	public static void aSyncConnect(final String ip, final int port, final ApiReceiveInterface apiBridge, final String mEmail, final String mPassword, final boolean crypt) throws LocalException, IOException {

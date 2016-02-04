@@ -13,17 +13,17 @@ import net.sytes.surfael.api.model.messages.Message;
 public class Client implements Serializable {
 
 	private static final long serialVersionUID = 296589332172289191L;
-	
+
 	Date registrationDate 		= null;
 	Date lastOnline 			= null;
 	Date lastMessageSent		= null;
-	
+
 	private int localPort;
 	private String version;
-	
+
 	boolean isConnect			= false;
 	boolean isDisconnect		= false;
-	
+
 	String text 				= null;
 	String name 				= null;
 	String middlename 			= null;
@@ -51,30 +51,30 @@ public class Client implements Serializable {
 	String youtube				= null;
 	String msn					= null;
 	String platform				= null;
-	
+
 	Message lastMessage 		= null;
 	List<Message> unSentMsgs	= null;
-	
-	Long id						= null;
-	Long msgCount				= null;
-	Long onlinetime 			= null;
-	Long messagesSent 			= null;
-	
+
+	int id						= 0;
+	int msgCount				= 0;
+	int onlinetime 				= 0;
+	int messagesSent 			= 0;
+
 	Socket sock 				= null;
-	
+
 	String ip 					= null;
 	Integer port 				= null;
-	
+
 	String aux1 				= null;
 	String aux2 				= null;
 	String aux3 				= null;
 	String aux4 				= null;
-	
+
 	public Client(Socket sock) {
 		this.sock = sock;
 	}
 	public Client() {
-		
+
 	}
 	public Client (Socket sock, Message m) {
 		this.sock 				= sock;
@@ -105,16 +105,16 @@ public class Client implements Serializable {
 		if (crypt) {
 			this.md5Password = MD5.getMD5(password);
 		} else {
-			this.md5Password = password;
+			this.password = password;
 		}
 	}
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
-	public Long getMsgCount() {
+	public int getMsgCount() {
 		return msgCount;
 	}
 	public String getLogin() {
@@ -141,8 +141,8 @@ public class Client implements Serializable {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public void setMsgCount(Long msgCount) {
-		this.msgCount = msgCount + 1L;
+	public void setMsgCount(int msgCount) {
+		this.msgCount = msgCount + 1;
 	}
 	public String getText() {
 		return text;
@@ -192,10 +192,10 @@ public class Client implements Serializable {
 	public void setTargetPort(Integer port) {
 		this.port = port;
 	}
-	public Long getOnlinetime() {
+	public int getOnlinetime() {
 		return onlinetime;
 	}
-	public void setOnlinetime(Long onlinetime) {
+	public void setOnlinetime(int onlinetime) {
 		this.onlinetime = onlinetime;
 	}
 	public Date getLastOnline() {
@@ -228,7 +228,7 @@ public class Client implements Serializable {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	
+
 	@Override
 	public String toString() {
 		if (this.getCollege().equalsIgnoreCase("infnet")) {
@@ -261,10 +261,10 @@ public class Client implements Serializable {
 	public void setUnSentMsgs(List<Message> unSentMsgs) {
 		this.unSentMsgs = unSentMsgs;
 	}
-	public Long getMessagesSent() {
+	public int getMessagesSent() {
 		return messagesSent;
 	}
-	public void setMessagesSent(Long messagesSent) {
+	public void setMessagesSent(int messagesSent) {
 		this.messagesSent = messagesSent;
 	}
 	public String getIp() {
@@ -410,16 +410,16 @@ public class Client implements Serializable {
 	}
 	public void setPlatform(int i) {
 		switch (i) {
-		case 0:
-			platform = "desktop";
-			break;
-		case 1:
-			platform = "web";
-			break;
-		case 2:
-			platform = "android";
-			break;
+			case 0:
+				platform = "desktop";
+				break;
+			case 1:
+				platform = "web";
+				break;
+			case 2:
+				platform = "android";
+				break;
 		}
 	}
-	
+
 }

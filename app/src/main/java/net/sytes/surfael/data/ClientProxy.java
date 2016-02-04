@@ -6,6 +6,8 @@ import net.sytes.surfael.api.model.clients.Client;
  * Created by raphaelb.rocha on 29/01/2016.
  */
 public class ClientProxy {
+    private int id;
+
     private String email;
     private String login;
     private String name;
@@ -19,6 +21,7 @@ public class ClientProxy {
         } else {
             login = client.getLogin();
         }
+        id = client.getId();
         name = client.getName();
         md5Password = client.getMD5Password();
     }
@@ -31,6 +34,8 @@ public class ClientProxy {
         } else if (login != null) {
             client.setLogin(login);
         }
+
+        client.setId(clientProxy.id);
         client.setLogin(clientProxy.login);
         client.setMD5Password(clientProxy.md5Password);
         client.setName(clientProxy.name);

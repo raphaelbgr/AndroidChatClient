@@ -107,7 +107,8 @@ public class H_ApiReceiver {
             @Override
             public void onReceiveNormalMessage(final NormalMessage normalMessage) {
                 Log.d("server_callback", normalMessage.toString());
-                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(Session.getCurrentUser().getLogin())) {
+                Client currentUser = Session.getCurrentUser();
+                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(currentUser.getLogin())) {
                     context.runOnUiThread(new Runnable() {
                         public void run() {
 //                            Toast.makeText(context, normalMessage.toString(), Toast.LENGTH_LONG).show();

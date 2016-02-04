@@ -241,7 +241,6 @@ public class MainActivity extends AppCompatActivity
             ApiSendFacade.overwriteListener(apiri);
             ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri,
                     Session.getCurrentUser().getEmail(), Session.getCurrentUser().getMD5Password(), false);
-//            ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
         } catch (LocalException e) {
             e.printStackTrace();
             if (!isPaused) {
