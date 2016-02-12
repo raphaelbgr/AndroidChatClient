@@ -1,48 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="50sp"
+    android:layout_height="90sp"
     android:orientation="horizontal"
     android:weightSum="1"
     android:paddingTop="5dp"
-    android:paddingBottom="5dp" >
+    android:paddingBottom="5dp"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1.00"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/txt_header"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textColor="#FFF"
-            android:textSize="14sp"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:textStyle="bold" />
+            android:gravity="start"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5">
+
+                <TextView
+                    android:id="@+id/txt_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|center_vertical"
+                    android:textColor="#FFF"
+                    android:textSize="16sp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textStyle="bold"
+                    android:gravity="start" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="right"
+                android:layout_gravity="right"
+                android:layout_weight="0.5">
+
+                <TextView
+                    android:id="@+id/txt_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|right"
+                    android:textSize="14sp"
+                    android:textColor="#FFF"
+                    android:gravity="top|start" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/txt_date"
-            android:layout_width="match_parent"
+            android:id="@+id/txt_amount"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textSize="12sp"
+            android:layout_gravity="center_vertical|bottom|right"
+            android:textSize="15sp"
+            android:layout_marginRight="15sp"
             android:textColor="#FFF" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/txt_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|right"
-        android:padding="3dp"
-        android:textSize="12sp"
-        android:layout_marginRight="15sp"
-        android:textColor="#FFF" />
 
 </LinearLayout>

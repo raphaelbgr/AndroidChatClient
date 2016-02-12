@@ -108,10 +108,9 @@ public class H_ApiReceiver {
             public void onReceiveNormalMessage(final NormalMessage normalMessage) {
                 Log.d("server_callback", normalMessage.toString());
                 Client currentUser = Session.getCurrentUser();
-                if (!normalMessage.getOwnerLogin().equalsIgnoreCase(currentUser.getLogin())) {
+                if (normalMessage.getSenderId() != currentUser.getId()) {
                     context.runOnUiThread(new Runnable() {
                         public void run() {
-//                            Toast.makeText(context, normalMessage.toString(), Toast.LENGTH_LONG).show();
                             context.notificateUser(normalMessage.getOwnerName(), normalMessage.getText());
                         }
                     });
@@ -145,6 +144,10 @@ public class H_ApiReceiver {
             @Override
             public void onReceiveClient(Client client) {
                 Log.d("server_callback", client.toString());
+                Snackbar snackbar = Snackbar.make(context.mSendButton, "Connected.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null);
+                snackbar.setActionTextColor(Color.MAGENTA);
+                snackbar.show();
             }
             @Override
             public void onReceiveServerException(ServerException e) {

@@ -10,9 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import net.sytes.surfael.api.model.clients.ClientSeenTime;
-
-@SuppressWarnings("unused")
 public class Message implements Serializable, Comparable<Message> {
 
 	/**
@@ -28,14 +25,14 @@ public class Message implements Serializable, Comparable<Message> {
 	private String version;
 	private int messageServerCount;
 	private int messageOwnerCount;
-	
+
 	private long ownerID;
 	private long creationTime;
-	
+
 	private Date serverReceivedTimeDate;
 	private String serverReceivedTimeString;
-	
-	private ClientSeenTime [] cst;
+
+	//	private ClientSeenTime [] cst;
 	private Vector<String> onlineUserList;
 
 	private boolean disconnect = false;
@@ -43,7 +40,7 @@ public class Message implements Serializable, Comparable<Message> {
 	private boolean connect = false;
 
 	private String compilationKey = null;
-	
+
 	private String addUser;
 	private String delUser;
 	private String ownerLogin;
@@ -61,14 +58,16 @@ public class Message implements Serializable, Comparable<Message> {
 	private String servresponse;
 	private String dnsHostName;
 
-	private String aux1;
-	private String aux2;
-	private String aux3;
-	private String aux4;
+//	private String aux1;
+//	private String aux2;
+//	private String aux3;
+//	private String aux4;
 
 	private Object msg_DateCreatedSQL;
 
 	private Long serverReceivedTimeLong;
+
+	private int senderId;
 
 	public Set<String> getSeen() {
 		return receivedby;
@@ -263,7 +262,7 @@ public class Message implements Serializable, Comparable<Message> {
 	/**
 	 * Sugestao do Daniel Olivera (Muito boa) de impressao direta do objeto via toString();
 	 */
-		@Override
+	@Override
 	public String toString() {
 		return "[" + this.getTimestamp() + "] " + this.getOwnerName() + " -> " + this.getText();
 	}
@@ -307,7 +306,7 @@ public class Message implements Serializable, Comparable<Message> {
 		this.setDateString();
 		return this;
 	}
-	
+
 	public Message buildConnectMessage() {
 		this.setOwnerLogin(getOwnerLogin());
 		this.setCreationtime(Calendar.getInstance().getTimeInMillis());
@@ -324,7 +323,7 @@ public class Message implements Serializable, Comparable<Message> {
 		setIp(ip);
 		setCreationtime(Calendar.getInstance().getTimeInMillis());
 	}
-	
+
 	public Message (String owner, String Message) {
 		setText(Message);
 		setOwnerLogin(owner);
@@ -395,5 +394,11 @@ public class Message implements Serializable, Comparable<Message> {
 	}
 	public void setDnsHostName(String dnsHostName) {
 		this.dnsHostName = dnsHostName;
+	}
+	public void setSenderId(int id) {
+		this.senderId = id;
+	}
+	public int getSenderId() {
+		return this.senderId;
 	}
 }

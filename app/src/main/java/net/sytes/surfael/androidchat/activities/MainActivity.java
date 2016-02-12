@@ -96,7 +96,8 @@ public class MainActivity extends AppCompatActivity
         mRecyclerMessages.setAdapter(adapterMessages);
         mRecyclerMessages.setHasFixedSize(true);
         mRecyclerMessages.setLayoutManager(layoutManager);
-        mRecyclerMessages.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
+        SimpleDividerItemDecoration sd = new SimpleDividerItemDecoration(getResources());
+        mRecyclerMessages.addItemDecoration(sd);
     }
 
     private void setSendAction() {
