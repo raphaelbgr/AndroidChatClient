@@ -105,7 +105,7 @@ public class Client implements Serializable {
 		if (crypt) {
 			this.md5Password = MD5.getMD5(password);
 		} else {
-			this.password = password;
+			this.md5Password = password;
 		}
 	}
 	public int getId() {
