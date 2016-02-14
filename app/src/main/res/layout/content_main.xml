@@ -10,7 +10,6 @@
     tools:context="net.sytes.surfael.androidchat.activities.MainActivity"
     android:baselineAligned="false"
     android:orientation="vertical"
-    android:gravity="bottom"
-    android:background="@color/chat_background">
+    android:gravity="bottom">
 
 </LinearLayout>

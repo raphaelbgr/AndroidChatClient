@@ -4,10 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -36,8 +33,11 @@ import android.widget.Toast;
 import net.sytes.surfael.androidchat.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import net.sytes.surfael.androidchat.classes.H_ApiReceiver;
+import net.sytes.surfael.androidchat.classes.H_FacebookCallBackFactory;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
 import net.sytes.surfael.api.control.classes.MD5;
@@ -50,7 +50,12 @@ import net.sytes.surfael.api.model.messages.NormalMessage;
 import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.Session;
 
-import static android.Manifest.permission.READ_CONTACTS;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 /**
  * A login screen that offers login via email/password.
@@ -78,10 +83,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public Client client;
     private FloatingActionButton mSendButton;
     private boolean isPaused;
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         Session.startHawk(this);
         client = Session.getCurrentUser();
@@ -95,11 +104,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             finish();
         } else {
             setContentView(R.layout.activity_login);
+
+            // Facebook
+            callbackManager = CallbackManager.Factory.create();
+            loginButton = (LoginButton) findViewById(R.id.login_button);
+            loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+            loginButton.registerCallback(callbackManager, H_FacebookCallBackFactory.createCallBackForLoginScreen(this));
+
             // Set up the login form.
             mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+            mEmailView.setHintTextColor(getResources().getColor(R.color.material_color));
 //            populateAutoComplete();
 
             mPasswordView = (EditText) findViewById(R.id.password);
+            mPasswordView.setHintTextColor(getResources().getColor(R.color.material_color));
+
             mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -121,54 +140,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             mLoginFormView = findViewById(R.id.login_form);
             mProgressView = findViewById(R.id.login_progress);
-
-//            mEmailView.setText("raphaelbgr@gmail.com");
-//            mPasswordView.setText("12345678");
         }
     }
 
-//    private void populateAutoComplete() {
-//        if (!mayRequestContacts()) {
-//            return;
-//        }
-//
-//        getLoaderManager().initLoader(0, null, this);
-//    }
-
-//    private boolean mayRequestContacts() {
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-//            return true;
-//        }
-//        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-//            return true;
-//        }
-//        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-//            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-//                    .setAction(android.R.string.ok, new View.OnClickListener() {
-//                        @Override
-//                        @TargetApi(Build.VERSION_CODES.M)
-//                        public void onClick(View v) {
-//                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-//                        }
-//                    });
-//        } else {
-//            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-//        }
-//        return false;
-//    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-//                                           @NonNull int[] grantResults) {
-//        if (requestCode == REQUEST_READ_CONTACTS) {
-//            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                populateAutoComplete();
-//            }
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 
 
     /**
@@ -225,7 +204,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-//        return email.contains("@");
         return true;
     }
 
@@ -333,75 +311,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private String mEmail;
         private String mPassword;
 
+        ApiReceiveInterface apiri;
+
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
+            apiri = H_ApiReceiver.buildApiCallbackForChatMessagesOnLoginScreen(lActivity, password);
         }
 
-        ApiReceiveInterface apiri = new ApiReceiveInterface() {
-            @Override
-            public void onReceive(Object o) {
-                Log.d("server_callback", o.toString());
-            }
 
-            @Override
-            public void onReceiveNormalMessage(final NormalMessage normalMessage) {
-                Log.d("server_callback", normalMessage.toString());
-                lActivity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(lActivity, normalMessage.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onReceiveDisconnectionMessage(DisconnectionMessage disconnectionMessage) {
-                Log.d("server_callback", disconnectionMessage.toString());
-            }
-
-            @Override
-            public void onReceiveServerMessage(final ServerMessage serverMessage) {
-                lActivity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Message m = (Message) serverMessage;
-                        if (m.getServresponse() != null) {
-                            Toast.makeText(lActivity, serverMessage.toString(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onReceiveClient(Client client) {
-                Intent intent = new Intent(lActivity, MainActivity.class);
-
-                Log.d("server_callback", client.toString());
-                client.setMD5Password(MD5.getMD5(mPassword));
-
-                Session.setCurrentUser(client);
-
-                startActivity(intent);
-                lActivity.finish();
-            }
-
-            @Override
-            public void onReceiveServerException(ServerException e) {
-                Log.d("server_callback", e.toString());
-            }
-
-            @Override
-            public void onConnectionError(Exception e) {
-                if (e.getLocalizedMessage() != null) {
-                    Log.d("server_callback", e.getLocalizedMessage());
-                }
-            }
-
-            @Override
-            public void onUserMessageReceived(Message m) {
-
-            }
-
-        };
 
         @Override
         protected Boolean doInBackground(Void... params) {

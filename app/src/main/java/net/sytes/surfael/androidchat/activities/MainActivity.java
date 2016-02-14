@@ -27,6 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.facebook.appevents.AppEventsLogger;
+
 import net.sytes.surfael.androidchat.R;
 
 import net.sytes.surfael.androidchat.adapters.MessagesRecycleAdapter;
@@ -227,12 +229,20 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        ApiSendFacade.overwriteListener(H_ApiReceiver.buildApiCallbackForChatMessagesWithoutLogin(this));
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
         isPaused = true;
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
     }
 
     private void buildApiListenerWithoutLogin() {

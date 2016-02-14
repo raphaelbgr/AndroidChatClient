@@ -1,6 +1,7 @@
 package net.sytes.surfael.api;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Calendar;
 
 import net.sytes.surfael.api.control.classes.MD5;
@@ -50,7 +51,31 @@ public class ApiSendFacade {
 		apiReceiver = new ApiReceiveFromServerThread(apiBridge);
 		t1 = new Thread(apiReceiver);
 		t1.start();
+	}
 
+	public static void connectFacebookAsync(final String ip, final int port, final ApiReceiveInterface apiBridge, final Client client) throws LocalException, IOException {
+		if (Status.getInstance().isConnected()) {
+			killService();
+		}
+		Thread t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					new Connect(ip, port);
+					Status.getInstance().setConnected(true);
+					ApiSendFacade.loginFacebook(client);
+
+					apiReceiver = new ApiReceiveFromServerThread(apiBridge);
+					t1 = new Thread(apiReceiver);
+					t1.start();
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t2.start();
 	}
 
 	public static void aSyncConnect(final String ip, final int port,
@@ -112,6 +137,14 @@ public class ApiSendFacade {
 	
 	public static Client login(String login, String password, boolean crypt) {
 		Client client = new Client(login, password, crypt);
+		client.setVersion(Status.VERSION);
+		client.setConnect(true);
+		client.setPlatform(2);
+		ApiSendFacade.send(client);
+		return null;
+	}
+
+	public static Client loginFacebook(Client client) {
 		client.setVersion(Status.VERSION);
 		client.setConnect(true);
 		client.setPlatform(2);

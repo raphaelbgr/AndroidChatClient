@@ -42,7 +42,6 @@
             android:layout_height="fill_parent"
             android:weightSum="1"
             android:gravity="right"
-            android:background="@color/chat_background"
             android:layout_marginLeft="16sp"
             android:layout_weight="0.01"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">

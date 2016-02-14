@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">androidchat</string>
+    <string name="app_name">Android Chat</string>
     
     <!-- Strings related to login -->
     <string name="prompt_email"><i>email/login</i></string>
@@ -20,4 +20,6 @@
 
     <string name="action_settings">Settings</string>
     <string name="text_hint"><i>Type your message here</i></string>
+    <string name="facebook_app_id"><i>880782058697130</i></string>
+
 </resources>

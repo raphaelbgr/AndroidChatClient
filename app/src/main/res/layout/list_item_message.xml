@@ -35,7 +35,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left|center_vertical"
-                    android:textColor="#FFF"
                     android:textSize="16sp"
                     android:singleLine="true"
                     android:ellipsize="end"
@@ -57,7 +56,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="top|right"
                     android:textSize="14sp"
-                    android:textColor="#FFF"
                     android:gravity="top|start" />
             </LinearLayout>
 
@@ -68,8 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:textSize="15sp"
-            android:textColor="#FFF" />
+            android:textSize="15sp" />
 
     </LinearLayout>
 
