@@ -38,8 +38,10 @@ public class Session {
         if (currentUser == null) {
             if (Hawk.contains("currentUser")) {
                 ClientProxy clientProxy = Hawk.get("currentUser");
-                Client client = clientProxy.buildClient(clientProxy);
-
+                Client client = null;
+                if (clientProxy != null) {
+                    client = clientProxy.buildClient(clientProxy);
+                }
                 return client;
             } else return null;
         } else return currentUser;

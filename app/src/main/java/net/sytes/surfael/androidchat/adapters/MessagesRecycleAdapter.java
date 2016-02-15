@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import net.sytes.surfael.androidchat.R;
+import net.sytes.surfael.androidchat.classes.CircleTransform;
 import net.sytes.surfael.api.model.messages.Message;
 
 import java.text.SimpleDateFormat;
@@ -81,9 +82,9 @@ public class MessagesRecycleAdapter extends  RecyclerView.Adapter<MessagesRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm dd/MM/yy", Locale.getDefault());
 
-        Date date = null;
+        Date date;
         if (messages.get(position).getMsgCreationDate() != null) {
             date = messages.get(position).getMsgCreationDate();
             viewHolder.getTxtDate().setText(dateFormat.format(date));
@@ -95,6 +96,7 @@ public class MessagesRecycleAdapter extends  RecyclerView.Adapter<MessagesRecycl
             Picasso.with(mContext)
                     .load(messages.get(position).getSenderPhotoUrl())
                     .resize(150, 150)
+//                    .transform(new CircleTransform())
                     .into(viewHolder.getProfilePicContainer())
             ;
         }

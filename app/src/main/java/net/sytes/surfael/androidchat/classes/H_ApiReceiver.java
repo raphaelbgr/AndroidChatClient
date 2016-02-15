@@ -71,6 +71,9 @@ public class H_ApiReceiver {
             @Override
             public void onReceiveClient(Client client) {
                 Log.d("server_callback", client.toString());
+
+                Session.setCurrentUser(client);
+
                 Snackbar snackbar = Snackbar.make(context.mSendButton, "Connected.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null);
                 snackbar.setActionTextColor(Color.MAGENTA);

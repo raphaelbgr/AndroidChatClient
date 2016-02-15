@@ -28,7 +28,8 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:layout_weight="0.5">
+                android:layout_weight="0.5"
+                android:layout_gravity="top">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -55,14 +56,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:gravity="right"
-                android:layout_gravity="right"
+                android:layout_gravity="top|right"
                 android:layout_weight="0.5">
 
                 <TextView
                     android:id="@+id/txt_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="top|right"
+                    android:layout_gravity="top|center_vertical|right"
                     android:textSize="14sp"
                     android:gravity="top|start" />
             </LinearLayout>

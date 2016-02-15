@@ -29,14 +29,17 @@ import android.widget.Toast;
 
 
 import com.facebook.appevents.AppEventsLogger;
+import com.squareup.picasso.Picasso;
 
 import net.sytes.surfael.androidchat.R;
 
 import net.sytes.surfael.androidchat.adapters.MessagesRecycleAdapter;
+import net.sytes.surfael.androidchat.classes.CircleTransform;
 import net.sytes.surfael.androidchat.classes.H_ApiReceiver;
 import net.sytes.surfael.androidchat.util.SimpleDividerItemDecoration;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
+import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
 import net.sytes.surfael.api.model.messages.Message;
 import net.sytes.surfael.data.Session;
@@ -101,6 +104,15 @@ public class MainActivity extends AppCompatActivity
         mRecyclerMessages.setLayoutManager(layoutManager);
         SimpleDividerItemDecoration sd = new SimpleDividerItemDecoration(getResources());
         mRecyclerMessages.addItemDecoration(sd);
+
+        Client client = Session.getCurrentUser();
+
+        ImageView profilePicDrawer = (ImageView) headerView.findViewById(R.id.drawer_profile_pic);
+        Picasso.with(this)
+                .load(Session.getCurrentUser().getPhotoUrl())
+                .resize(170, 170)
+                .transform(new CircleTransform())
+                .into(profilePicDrawer) ;
     }
 
     private void setSendAction() {
