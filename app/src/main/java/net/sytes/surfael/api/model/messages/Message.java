@@ -58,10 +58,7 @@ public class Message implements Serializable, Comparable<Message> {
 	private String servresponse;
 	private String dnsHostName;
 
-//	private String aux1;
-//	private String aux2;
-//	private String aux3;
-//	private String aux4;
+	private String senderPhotoUrl;
 
 	private Object msg_DateCreatedSQL;
 
@@ -266,11 +263,6 @@ public class Message implements Serializable, Comparable<Message> {
 	public String toString() {
 		return "[" + this.getTimestamp() + "] " + this.getOwnerName() + " -> " + this.getText();
 	}
-	/*
-	@Override
-	public int compare(Message o1, Message o2) {
-		return o1.getType().compareTo(o2.getType());
-	}*/
 
 	@Override
 	public int compareTo(Message m) {
@@ -400,5 +392,12 @@ public class Message implements Serializable, Comparable<Message> {
 	}
 	public int getSenderId() {
 		return this.senderId;
+	}
+	public String getSenderPhotoUrl() {
+		return senderPhotoUrl;
+	}
+
+	public void setSenderPhotoUrl(String senderPhotoUrl) {
+		this.senderPhotoUrl = senderPhotoUrl;
 	}
 }

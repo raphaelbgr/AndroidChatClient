@@ -10,7 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import net.sytes.surfael.androidchat.R;
 import net.sytes.surfael.api.model.messages.Message;
@@ -32,6 +35,7 @@ public class MessagesRecycleAdapter extends  RecyclerView.Adapter<MessagesRecycl
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView profilePicMessage;
         private TextView mTxtHeader, mTxtDate, mTxtAmount;
 
         public ViewHolder(final View itemView) {
@@ -40,6 +44,8 @@ public class MessagesRecycleAdapter extends  RecyclerView.Adapter<MessagesRecycl
             mTxtHeader = (TextView) itemView.findViewById(R.id.txt_header);
             mTxtDate = (TextView) itemView.findViewById(R.id.txt_date);
             mTxtAmount = (TextView) itemView.findViewById(R.id.txt_amount);
+
+            profilePicMessage = (ImageView) itemView.findViewById(R.id.message_profile_pic);
         }
 
         public TextView getTxtHeader() {
@@ -52,6 +58,10 @@ public class MessagesRecycleAdapter extends  RecyclerView.Adapter<MessagesRecycl
 
         public TextView getTxtAmount() {
             return mTxtAmount;
+        }
+
+        public ImageView getProfilePicContainer() {
+            return profilePicMessage;
         }
     }
 
@@ -73,7 +83,7 @@ public class MessagesRecycleAdapter extends  RecyclerView.Adapter<MessagesRecycl
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
-        Date date =  null;
+        Date date = null;
         if (messages.get(position).getMsgCreationDate() != null) {
             date = messages.get(position).getMsgCreationDate();
             viewHolder.getTxtDate().setText(dateFormat.format(date));
@@ -81,5 +91,12 @@ public class MessagesRecycleAdapter extends  RecyclerView.Adapter<MessagesRecycl
 
         viewHolder.getTxtHeader().setText(messages.get(position).getOwnerName());
         viewHolder.getTxtAmount().setText(messages.get(position).getText());
+        if (messages.get(position).getSenderPhotoUrl() != null) {
+            Picasso.with(mContext)
+                    .load(messages.get(position).getSenderPhotoUrl())
+                    .resize(150, 150)
+                    .into(viewHolder.getProfilePicContainer())
+            ;
+        }
     }
 }
