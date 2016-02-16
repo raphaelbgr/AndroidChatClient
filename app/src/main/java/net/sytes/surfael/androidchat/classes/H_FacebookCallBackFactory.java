@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.UUID;
 
 
 /**
@@ -41,14 +42,19 @@ public class H_FacebookCallBackFactory {
                                 // Application code
                                 LoginManager.getInstance().logOut();
                                 try {
+                                    String email;
                                     String picUrl = object.getJSONObject("picture").getJSONObject("data").getString("url");
-                                    String email = object.getString("email");
 //                                    String birthday = object.getString("birthday");
                                     String gender = object.getString("gender");
                                     String name = object.getString("name");
 
                                     Client client = new Client();
                                     client.setPhotoUrl(picUrl);
+                                    if (object.has("email")) {
+                                        email = object.getString("email");
+                                    } else {
+                                        email = "unconfirmed_email@" + UUID.randomUUID().toString() + ".com";
+                                    }
                                     client.setEmail(email);
                                     client.setSex(gender);
                                     client.setFbToken(accessToken);

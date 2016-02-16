@@ -9,7 +9,7 @@ import net.sytes.surfael.api.model.exceptions.LocalException;
 
 public class Send {
 
-	ClientStream stream 	= ClientStream.getInstance();
+	ClientStream stream = ClientStream.getInstance();
 
 	public Send(Object o) throws IOException, LocalException {
 		if (Status.getInstance().isConnected()) {

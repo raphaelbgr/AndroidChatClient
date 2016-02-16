@@ -3,6 +3,7 @@ package net.sytes.surfael.api.control.services;
 import java.io.IOException;
 
 import net.sytes.surfael.api.ApiReceiveInterface;
+import net.sytes.surfael.api.ApiSendFacade;
 import net.sytes.surfael.api.control.sync.ClientStream;
 import net.sytes.surfael.api.control.sync.Status;
 import net.sytes.surfael.api.model.clients.Client;
@@ -14,12 +15,24 @@ import net.sytes.surfael.api.model.messages.ServerMessage;
 
 public class ApiReceiveFromServerThread implements Runnable {
 
+	private Client fbClient;
 	private ClientStream stream = ClientStream.getInstance();
 	private ApiReceiveInterface api;
 	private boolean suicide = false;
+	private String email;
+	private String password;
+	private boolean crypt;
 
 	@Override
 	public void run() {
+		Status.getInstance().setConnected(true);
+
+		if (fbClient != null) {
+			ApiSendFacade.loginFacebook(fbClient);
+		} else {
+			ApiSendFacade.login(email, password, crypt);
+		}
+
 		while (!suicide) {
 			try {
 				final Object o = stream.receiveMessage();
@@ -29,25 +42,27 @@ public class ApiReceiveFromServerThread implements Runnable {
 						api.onReceiveNormalMessage((NormalMessage) o);
 					} else if (o instanceof DisconnectionMessage) {
 						Status.getInstance().setConnected(false);
+						Status.getInstance().setLoggedIn(false);
 						api.onReceiveDisconnectionMessage((DisconnectionMessage) o);
 						break;
 					} else if (o instanceof ServerMessage) {
 						api.onReceiveServerMessage((ServerMessage) o);
 					}
 				} else if (o instanceof Client) {
-					Status.getInstance().setConnected(true);
+					Status.getInstance().setLoggedIn(true);
 					api.onReceiveClient((Client) o);
 				} else if (o instanceof ServerException) {
 					api.onReceiveServerException((ServerException) o);
 				}
 			} catch (ClassNotFoundException | IOException e) {
 				Status.getInstance().setConnected(false);
+				Status.getInstance().setLoggedIn(false);
 				e.printStackTrace();
 				suicide = true;
 				api.onConnectionError(e);
 			}
 		}
-		suicide = false;
+		suicide = !Status.getInstance().isConnected();
 	}
 	
 	public ApiReceiveFromServerThread(ApiReceiveInterface apiBridge) {
@@ -64,5 +79,20 @@ public class ApiReceiveFromServerThread implements Runnable {
 	public void killThread() {
 		suicide = true;
 	}
-	
+
+	public void setFacebookClient(Client client) {
+		this.fbClient = client;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setCrypt(boolean crypt) {
+		this.crypt = crypt;
+	}
 }
