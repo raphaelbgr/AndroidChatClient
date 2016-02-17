@@ -16,7 +16,10 @@ import net.sytes.surfael.api.model.messages.DisconnectionMessage;
 import net.sytes.surfael.api.model.messages.Message;
 import net.sytes.surfael.api.model.messages.NormalMessage;
 import net.sytes.surfael.api.model.messages.ServerMessage;
+import net.sytes.surfael.data.MessageProxy;
 import net.sytes.surfael.data.Session;
+
+import java.util.ArrayList;
 
 /**
  * Created by raphaelb.rocha on 03/02/2016.
@@ -33,7 +36,6 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveNormalMessage(final NormalMessage normalMessage) {
-                Log.d("server_callback", normalMessage.toString());
                 Client currentUser = Session.getCurrentUser();
                 if (normalMessage.getSenderId() != currentUser.getId()) {
                     context.runOnUiThread(new Runnable() {
@@ -42,9 +44,11 @@ public class H_ApiReceiver {
                         }
                     });
                 }
+                context.messageList.add(new MessageProxy(normalMessage));
+                Session.storeHistory(new ArrayList<MessageProxy>(context.messageList));
+
                 context.runOnUiThread(new Runnable() {
                     public void run() {
-                        context.messageList.add(normalMessage);
                         context.adapterMessages.notifyDataSetChanged();
                         context.mRecyclerMessages.smoothScrollToPosition(context.adapterMessages.getItemCount());
                     }
@@ -53,7 +57,7 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveDisconnectionMessage(DisconnectionMessage disconnectionMessage) {
-                Log.d("server_callback", disconnectionMessage.toString());
+//                Log.d("server_callback", disconnectionMessage.toString());
             }
 
             @Override
@@ -70,7 +74,7 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveClient(Client client) {
-                Log.d("server_callback", client.toString());
+//                Log.d("server_callback", client.toString());
 
                 Session.setCurrentUser(client);
 
@@ -87,13 +91,13 @@ public class H_ApiReceiver {
             @Override
             public void onConnectionError(Exception e) {
                 if (e.getLocalizedMessage() != null) {
-                    Log.d("server_callback", e.getLocalizedMessage());
+//                    Log.d("server_callback", e.getLocalizedMessage());
                 }
             }
 
             @Override
             public void onUserMessageReceived(Message m) {
-                Log.d("server_callback", m.toString());
+
             }
 
         };
@@ -110,7 +114,7 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveNormalMessage(final NormalMessage normalMessage) {
-                Log.d("server_callback", normalMessage.toString());
+//                Log.d("server_callback", normalMessage.toString());
                 context.runOnUiThread(new Runnable() {
                     public void run() {
                         Toast.makeText(context, normalMessage.toString(), Toast.LENGTH_LONG).show();
@@ -120,7 +124,7 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveDisconnectionMessage(DisconnectionMessage disconnectionMessage) {
-                Log.d("server_callback", disconnectionMessage.toString());
+//                Log.d("server_callback", disconnectionMessage.toString());
             }
 
             @Override
@@ -139,7 +143,7 @@ public class H_ApiReceiver {
             public void onReceiveClient(Client client) {
                 Intent intent = new Intent(context, MainActivity.class);
 
-                Log.d("server_callback", client.toString());
+//                Log.d("server_callback", client.toString());
                 client.setMD5Password(MD5.getMD5(mPassword));
 
                 Session.setCurrentUser(client);
@@ -179,7 +183,7 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveNormalMessage(final NormalMessage normalMessage) {
-                Log.d("server_callback", normalMessage.toString());
+//                Log.d("server_callback", normalMessage.toString());
                 context.runOnUiThread(new Runnable() {
                     public void run() {
                         Toast.makeText(context, normalMessage.toString(), Toast.LENGTH_LONG).show();
@@ -189,7 +193,7 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveDisconnectionMessage(DisconnectionMessage disconnectionMessage) {
-                Log.d("server_callback", disconnectionMessage.toString());
+//                Log.d("server_callback", disconnectionMessage.toString());
             }
 
             @Override
@@ -208,7 +212,7 @@ public class H_ApiReceiver {
             public void onReceiveClient(Client client) {
                 Intent intent = new Intent(context, MainActivity.class);
 
-                Log.d("server_callback", client.toString());
+//                Log.d("server_callback", client.toString());
 
                 Client mergedClient = Session.mergeFacebookClient(client, fbClient);
                 Session.setCurrentUser(mergedClient);

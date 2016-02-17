@@ -53,7 +53,7 @@ public class H_FacebookCallBackFactory {
                                     if (object.has("email")) {
                                         email = object.getString("email");
                                     } else {
-                                        email = "unconfirmed_email@" + UUID.randomUUID().toString() + ".com";
+                                        email = "private_email@" + UUID.randomUUID().toString() + ".com";
                                     }
                                     client.setEmail(email);
                                     client.setSex(gender);

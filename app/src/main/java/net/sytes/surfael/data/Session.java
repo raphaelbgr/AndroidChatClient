@@ -6,7 +6,13 @@ import com.orhanobut.hawk.Hawk;
 import com.orhanobut.hawk.HawkBuilder;
 import com.orhanobut.hawk.LogLevel;
 
+import net.sytes.surfael.androidchat.adapters.MessagesRecycleAdapter;
 import net.sytes.surfael.api.model.clients.Client;
+import net.sytes.surfael.api.model.messages.Message;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Raphael on 10/12/2015.
@@ -64,5 +70,21 @@ public class Session {
             client.setSex(fbClient.getSex());
         }
         return client;
+    }
+
+    public static synchronized void storeHistory(List<MessageProxy> messageList) {
+        synchronized (messageList) {
+            if (Hawk.contains("messageList")) {
+                Hawk.remove("messageList");
+            }
+            Hawk.put("messageList", messageList);
+        }
+    }
+
+    public static synchronized List<MessageProxy> getHistory() {
+        if (Hawk.contains("messageList")) {
+            return Hawk.get("messageList");
+        }
+        return new ArrayList<>();
     }
 }

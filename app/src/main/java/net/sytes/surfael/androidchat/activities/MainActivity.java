@@ -42,6 +42,7 @@ import net.sytes.surfael.api.ApiSendFacade;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
 import net.sytes.surfael.api.model.messages.Message;
+import net.sytes.surfael.data.MessageProxy;
 import net.sytes.surfael.data.Session;
 
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity
     public FloatingActionButton mSendButton;
     private EditText mEditText;
     public RecyclerView mRecyclerMessages;
-    public List<Message> messageList;
+    public List<MessageProxy> messageList;
     public MessagesRecycleAdapter adapterMessages;
     private boolean isPaused;
     private ApiReceiveInterface apiri;
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Session.startHawk(this);
 
         setContentView(R.layout.activity_main);
 
@@ -77,6 +80,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        messageList = Session.getHistory();
+        adapterMessages = new MessagesRecycleAdapter(messageList, this, getSupportFragmentManager());
 
         View headerView = navigationView.getHeaderView(0);
 
@@ -93,11 +99,6 @@ public class MainActivity extends AppCompatActivity
 
         mRecyclerMessages = (RecyclerView) findViewById(R.id.recycler_transactions);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-
-        if (messageList == null) {
-            messageList = new ArrayList<Message>();
-        }
-        adapterMessages = new MessagesRecycleAdapter(messageList, this, getSupportFragmentManager());
 
         mRecyclerMessages.setAdapter(adapterMessages);
         mRecyclerMessages.setHasFixedSize(true);
@@ -247,6 +248,15 @@ public class MainActivity extends AppCompatActivity
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
 
+        messageList = Session.getHistory();
+        adapterMessages = new MessagesRecycleAdapter(messageList, this, getSupportFragmentManager());
+        mRecyclerMessages.setAdapter(adapterMessages);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                adapterMessages.notifyDataSetChanged();
+                mRecyclerMessages.smoothScrollToPosition(adapterMessages.getItemCount());
+            }
+        });
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.squareup.picasso.Picasso;
 import net.sytes.surfael.androidchat.R;
 import net.sytes.surfael.androidchat.classes.CircleTransform;
 import net.sytes.surfael.api.model.messages.Message;
+import net.sytes.surfael.data.MessageProxy;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,11 +26,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class MessagesRecycleAdapter extends  RecyclerView.Adapter<MessagesRecycleAdapter.ViewHolder> {
-    private static List<Message> messages;
-    protected static Activity mContext;
+    protected List<MessageProxy> messages;
+    protected Activity mContext;
     protected final FragmentManager supportFragmentManager;
 
-    public MessagesRecycleAdapter(List<Message> messages, Activity mContext, FragmentManager supportFragmentManager){
+    public MessagesRecycleAdapter(List<MessageProxy> messages, Activity mContext, FragmentManager supportFragmentManager){
         this.messages = messages;
         this.mContext = mContext;
         this.supportFragmentManager = supportFragmentManager;
