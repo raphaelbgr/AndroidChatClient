@@ -8,7 +8,7 @@
 
     <include layout="@layout/content_main" />
 
-    <LinearLayout
+    <net.sytes.surfael.androidchat.classes.CustomLinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -36,7 +36,8 @@
             android:layout_weight="0.99"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <LinearLayout
+        <net.sytes.surfael.androidchat.classes.CustomLinearLayout
+            android:id="@+id/linearLayout"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -70,8 +71,8 @@
                 android:layout_margin="@dimen/fab_margin"
                 android:src="@android:drawable/ic_dialog_email"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-        </LinearLayout>
+        </net.sytes.surfael.androidchat.classes.CustomLinearLayout>
 
-    </LinearLayout>
+    </net.sytes.surfael.androidchat.classes.CustomLinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
