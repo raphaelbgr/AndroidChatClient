@@ -40,7 +40,7 @@ public class H_ApiReceiver {
                 if (normalMessage.getSenderId() != currentUser.getId()) {
                     context.runOnUiThread(new Runnable() {
                         public void run() {
-                            context.notificateUser(normalMessage.getOwnerName(), normalMessage.getText());
+                            context.notificateUser(normalMessage);
                         }
                     });
                 }

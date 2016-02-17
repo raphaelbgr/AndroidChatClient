@@ -1,11 +1,13 @@
 package net.sytes.surfael.androidchat.activities;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -22,8 +24,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,13 +61,16 @@ public class MainActivity extends AppCompatActivity
     public RecyclerView mRecyclerMessages;
     public List<MessageProxy> messageList;
     public MessagesRecycleAdapter adapterMessages;
-    private boolean isPaused;
+    public boolean isPaused;
     private ApiReceiveInterface apiri;
     private boolean stored;
+    protected MainActivity mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mContext = this;
 
         Session.startHawk(this);
 
@@ -113,7 +120,9 @@ public class MainActivity extends AppCompatActivity
                 .load(Session.getCurrentUser().getPhotoUrl())
                 .resize(170, 170)
                 .transform(new CircleTransform())
-                .into(profilePicDrawer) ;
+                .into(profilePicDrawer);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void setSendAction() {
@@ -191,36 +200,54 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void notificateUser(String title, String message) {
-        android.support.v4.app.NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.sym_action_chat)
-                        .setContentTitle(title)
-                        .setContentText(message)
-                        .setDefaults(Notification.DEFAULT_ALL);
+    public void notificateUser(final Message m) {
 
-// Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MainActivity.class);
+        final Notification notification;
 
-// The stack builder object will contain an artificial back stack for the
-// started Activity.
-// This ensures that navigating backward from the Activity leads out of
-// your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-// Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainActivity.class);
-// Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
-        mNotificationManager.notify(1, mBuilder.build());
+
+        if (mContext.isPaused) {
+            android.support.v4.app.NotificationCompat.Builder mBuilder;
+            mBuilder =
+                    new NotificationCompat.Builder(mContext)
+                            .setSmallIcon(R.drawable.sym_action_chat)
+                            .setContentTitle(m.getOwnerName())
+                            .setContentText(m.getText())
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setStyle(new NotificationCompat.BigPictureStyle());
+
+            // Creates an explicit intent for an Activity in your app
+            Intent resultIntent = new Intent(mContext, MainActivity.class);
+
+            // The stack builder object will contain an artificial back stack for the
+            // started Activity.
+            // This ensures that navigating backward from the Activity leads out of
+            // your application to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(MainActivity.class);
+
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.setContentIntent(resultPendingIntent);
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            // mId allows you to update the notification later on.
+            notification = mBuilder.build();
+            mNotificationManager.notify(1, notification);
+
+            int iconId = android.R.id.icon;
+//            int bigIconId = getResources().getIdentifier("android:id/big_picture", null, null);
+
+            // Get RemoteView and id's needed
+            RemoteViews contentView = notification.contentView;
+//            RemoteViews bigContentView = notification.bigContentView;
+
+            Picasso.with(mContext).load(m.getSenderPhotoUrl()).transform(new CircleTransform()).resize(1024, 1024).into(contentView, iconId, 1, notification);
+//            Picasso.with(mContext).load(m.getSenderPhotoUrl()).into(bigContentView, bigIconId, 1, notification);
+        }
+
     }
 
     @Override
