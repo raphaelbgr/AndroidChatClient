@@ -18,8 +18,8 @@ import java.util.List;
  * Created by Raphael on 10/12/2015.
  */
 public class Session {
-//    public static final String SERVER_IP = "54.232.241.237";
-    public static final String SERVER_IP = "192.168.2.11";
+    public static final String SERVER_IP = "54.232.241.237";
+//    public static final String SERVER_IP = "192.168.2.11";
     public static final int SERVER_PORT = 2001;
     private static Client currentUser;
 
