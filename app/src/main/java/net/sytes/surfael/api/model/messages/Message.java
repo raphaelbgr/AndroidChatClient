@@ -46,6 +46,7 @@ public class Message implements Serializable, Comparable<Message> {
 	private String ownerLogin;
 	private String text;
 	private String timestamp;
+
 	private String date;
 	private String ownerName;
 
@@ -399,5 +400,9 @@ public class Message implements Serializable, Comparable<Message> {
 
 	public void setSenderPhotoUrl(String senderPhotoUrl) {
 		this.senderPhotoUrl = senderPhotoUrl;
+	}
+
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
 	}
 }

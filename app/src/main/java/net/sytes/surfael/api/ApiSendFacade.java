@@ -6,12 +6,12 @@ import java.util.Calendar;
 
 import net.sytes.surfael.api.control.serverinteraction.Connect;
 import net.sytes.surfael.api.control.serverinteraction.Send;
-import net.sytes.surfael.api.control.services.ApiReceiveFromServerThread;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
 import net.sytes.surfael.api.control.sync.Status;
 import net.sytes.surfael.api.model.messages.Message;
 import net.sytes.surfael.api.model.messages.NormalMessage;
+import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.Session;
 
 public class ApiSendFacade {
@@ -161,6 +161,14 @@ public class ApiSendFacade {
 		m.setDateString();
 		m.setText(string);
 		return m;
+	}
+
+	public static boolean requestHistory(int limit) {
+		ServerMessage sm = new ServerMessage();
+		sm.setRequest("androidhistory");
+		sm.setRowLimit(limit);
+
+        return ApiSendFacade.send(sm);
 	}
 
 }

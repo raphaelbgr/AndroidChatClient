@@ -13,13 +13,19 @@ import net.sytes.surfael.api.control.classes.MD5;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.ServerException;
 import net.sytes.surfael.api.model.messages.DisconnectionMessage;
+import net.sytes.surfael.api.model.messages.History;
 import net.sytes.surfael.api.model.messages.Message;
 import net.sytes.surfael.api.model.messages.NormalMessage;
 import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.MessageProxy;
 import net.sytes.surfael.data.Session;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 /**
  * Created by raphaelb.rocha on 03/02/2016.
@@ -100,6 +106,57 @@ public class H_ApiReceiver {
 
             }
 
+            @Override
+            public void onReceiveServerHistory(History h) {
+                if (h.getMessagelogRows()!= null && h.getMessagelogRows().size() > 0) {
+                    for (HashMap<String, String> row : h.getMessagelogRows()) {
+                        int id = Integer.valueOf(row.get("ID"));
+                        boolean contains = false;
+
+                        for (MessageProxy mp : context.messageList) {
+                            if (mp.getMessageProxyServerCount() == id) {
+                                contains = true;
+                                break;
+                            }
+                        }
+                        if (!contains) {
+                            String timestamp = row.get("Timestamp");
+                            String owner = row.get("Owner");
+                            String message = row.get("Message");
+                            String photo_url = row.get("Photo_URL");
+                            String ownerid = row.get("OwnerID");
+
+                            MessageProxy newMp = new MessageProxy();
+                            newMp.setMessageProxyServerCount(id);
+                            newMp.setTimestamp(timestamp);
+                            newMp.setOwnerName(owner);
+                            newMp.setText(message);
+                            newMp.setSenderPhotoUrl(photo_url);
+                            newMp.setOwnerID(Integer.valueOf(ownerid));
+
+                            context.messageList.add(newMp);
+                        }
+                    }
+                    Collections.sort(context.messageList, new Comparator<MessageProxy>() {
+                        @Override
+                        public int compare(MessageProxy lhs, MessageProxy rhs) {
+                            if (lhs.getMessageProxyServerCount() == rhs.getMessageProxyServerCount()) {
+                                return 0;
+                            } else if (lhs.getMessageProxyServerCount() > rhs.getMessageProxyServerCount()) {
+                                return 1;
+                            } else return -1;
+
+                        }
+                    });
+                    Session.storeHistory(context.messageList);
+                    context.runOnUiThread(new Runnable() {
+                        public void run() {
+                            context.adapterMessages.notifyDataSetChanged();
+                            context.mRecyclerMessages.smoothScrollToPosition(context.adapterMessages.getItemCount());
+                        }
+                    });
+                }
+            }
         };
 
         return apiri;
@@ -169,6 +226,11 @@ public class H_ApiReceiver {
 
             }
 
+            @Override
+            public void onReceiveServerHistory(History h) {
+
+            }
+
         };
 
         return apiri;
@@ -235,6 +297,11 @@ public class H_ApiReceiver {
 
             @Override
             public void onUserMessageReceived(Message m) {
+
+            }
+
+            @Override
+            public void onReceiveServerHistory(History h) {
 
             }
 

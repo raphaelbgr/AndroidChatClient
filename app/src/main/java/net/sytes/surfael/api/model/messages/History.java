@@ -2,26 +2,29 @@ package net.sytes.surfael.api.model.messages;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class History implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -8709301814741794114L;
-	
+
 	private int rowLimit = 0;
-	
+
 	private List<String> headers = new ArrayList<String>();
-	
+
 	private List<String> column1 = new ArrayList<String>();
 	private List<String> column2 = new ArrayList<String>();
 	private List<String> column3 = new ArrayList<String>();
 	private List<String> column4 = new ArrayList<String>();
 	private List<String> column5 = new ArrayList<String>();
 	private List<String> column6 = new ArrayList<String>();
-	
+
+	private List<HashMap<String, String>> messagelogRows;
+
 	public List<String> getHeaders() {
 		return headers;
 	}
@@ -71,4 +74,14 @@ public class History implements Serializable {
 		this.rowLimit = rowLimit;
 	}
 
+	public void addMessageRow(HashMap<String, String> messagelogRow) {
+		if (this.messagelogRows == null) {
+			messagelogRows = new ArrayList<>();
+		}
+		messagelogRows.add(messagelogRow);
+	}
+
+	public List<HashMap<String, String>> getMessagelogRows() {
+		return messagelogRows;
+	}
 }

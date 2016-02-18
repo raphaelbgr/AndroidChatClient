@@ -9,12 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +27,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     private ApiReceiveInterface apiri;
     private boolean stored;
     protected MainActivity mContext;
+    private int onPauseTimes = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +145,19 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
+        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    mSendButton.callOnClick();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+        mEditText.setTypeface(Typeface.DEFAULT);
     }
 
     @Override
@@ -156,7 +173,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+//        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -181,19 +198,19 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
+//        if (id == R.id.nav_camara) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -254,6 +271,7 @@ public class MainActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
         isPaused = false;
+        onPauseTimes++;
 
         if (getIntent().getExtras() != null) {
             Intent intent = getIntent();
@@ -284,6 +302,9 @@ public class MainActivity extends AppCompatActivity
                 mRecyclerMessages.smoothScrollToPosition(adapterMessages.getItemCount());
             }
         });
+        if (onPauseTimes == 1) {
+            ApiSendFacade.requestHistory(0);
+        }
     }
 
     @Override

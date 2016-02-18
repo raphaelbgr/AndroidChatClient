@@ -398,4 +398,7 @@ public class MessageProxy {
     public void setSenderPhotoUrl(String senderPhotoUrl) {
         this.senderPhotoUrl = senderPhotoUrl;
     }
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
 }

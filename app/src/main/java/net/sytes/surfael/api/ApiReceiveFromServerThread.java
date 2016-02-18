@@ -1,4 +1,4 @@
-package net.sytes.surfael.api.control.services;
+package net.sytes.surfael.api;
 
 import java.io.IOException;
 
@@ -9,6 +9,7 @@ import net.sytes.surfael.api.control.sync.Status;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.ServerException;
 import net.sytes.surfael.api.model.messages.DisconnectionMessage;
+import net.sytes.surfael.api.model.messages.History;
 import net.sytes.surfael.api.model.messages.Message;
 import net.sytes.surfael.api.model.messages.NormalMessage;
 import net.sytes.surfael.api.model.messages.ServerMessage;
@@ -53,6 +54,8 @@ public class ApiReceiveFromServerThread implements Runnable {
 					api.onReceiveClient((Client) o);
 				} else if (o instanceof ServerException) {
 					api.onReceiveServerException((ServerException) o);
+				} else if (o instanceof History) {
+					api.onReceiveServerHistory((History) o);
 				}
 			} catch (ClassNotFoundException | IOException e) {
 				Status.getInstance().setConnected(false);
