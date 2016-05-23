@@ -87,4 +87,9 @@ public class Session {
         }
         return new ArrayList<>();
     }
+
+    public static boolean logout() {
+        currentUser = null;
+        return Hawk.remove("messageList") && Hawk.remove("currentUser");
+    }
 }

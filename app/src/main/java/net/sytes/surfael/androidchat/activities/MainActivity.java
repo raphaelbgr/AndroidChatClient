@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 
 import com.facebook.appevents.AppEventsLogger;
+import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 
 import net.sytes.surfael.androidchat.R;
@@ -198,8 +199,26 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_camara) {
-//            // Handle the camera action
+        if (id == R.id.nav_logout) {
+            try {
+                while (!Session.logout()) {
+                    // Esperar cliente ser limpado e tentar novamente
+                    Thread.sleep(1000);
+                }
+
+                // TODO Tentar avisar o logout ao Servidor
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                this.finish();
+                Toast.makeText(this, "Deslogado com sucesso!",Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+            }
+
+        }
+//        }
+            // Handle the camera action
 //        } else if (id == R.id.nav_gallery) {
 //
 //        } else if (id == R.id.nav_slideshow) {

@@ -37,7 +37,8 @@
                     android:id="@+id/message_profile_pic"
                     android:contentDescription="Profile chat pic"
                     android:layout_gravity="top|center_vertical"
-                    android:layout_marginRight="5sp" />
+                    android:layout_marginRight="5sp"
+                    android:scaleType="fitXY" />
 
                 <TextView
                     android:id="@+id/txt_header"
