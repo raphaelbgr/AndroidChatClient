@@ -134,7 +134,12 @@ public class Client implements Serializable {
 		this.md5Password = md5Password;
 	}
 	public String getEmail() {
-		return email;
+		if (email != null)
+			return email;
+		else if (login != null)
+			return login;
+		else
+			return "no_email@email.com";
 	}
 	public void setEmail(String email) {
 		this.email = email;
@@ -230,7 +235,7 @@ public class Client implements Serializable {
 	@Override
 	public String toString() {
 		if (this.getCollege() != null) {
-			if (this.getCollege().equalsIgnoreCase("infnet")) {
+			if (this.college.equalsIgnoreCase("infnet")) {
 				return this.name + " / " + this.getCourse() + this.getStartTrimester().substring(0, 4);
 			} else {
 				return this.name + " / " + this.getCollege();

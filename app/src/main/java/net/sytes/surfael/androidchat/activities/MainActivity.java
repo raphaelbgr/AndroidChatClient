@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity
 
         mContext = this;
 
+        Client client = Session.getCurrentUser();
+
         Session.startHawk(this);
 
         setContentView(R.layout.activity_main);
@@ -99,10 +101,10 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
 
         TextView mHeader = (TextView)headerView.findViewById(R.id.email_drawer);
-        mHeader.setText(Session.getCurrentUser().getEmail());
+        mHeader.setText(client.getEmail());
 
         TextView mSubtitle = (TextView) headerView.findViewById(R.id.name_drawer);
-        mSubtitle.setText(Session.getCurrentUser().getName());
+        mSubtitle.setText(client.getName());
 
         mSendButton = (FloatingActionButton) findViewById(R.id.fab);
         mEditText = (EditText) findViewById(R.id.editText);
@@ -118,11 +120,9 @@ public class MainActivity extends AppCompatActivity
         SimpleDividerItemDecoration sd = new SimpleDividerItemDecoration(getResources());
         mRecyclerMessages.addItemDecoration(sd);
 
-        Client client = Session.getCurrentUser();
-
         ImageView profilePicDrawer = (ImageView) headerView.findViewById(R.id.drawer_profile_pic);
         Picasso.with(this)
-                .load(Session.getCurrentUser().getPhotoUrl())
+                .load(client.getPhotoUrl())
                 .resize(170, 170)
                 .transform(new CircleTransform())
                 .into(profilePicDrawer);

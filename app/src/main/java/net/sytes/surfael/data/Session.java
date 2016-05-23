@@ -90,6 +90,6 @@ public class Session {
 
     public static boolean logout() {
         currentUser = null;
-        return Hawk.remove("messageList") && Hawk.remove("currentUser");
+        return Hawk.remove("messageList") && Hawk.remove("currentUser") && Hawk.clear();
     }
 }
