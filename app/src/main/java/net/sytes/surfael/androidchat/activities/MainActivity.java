@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity
     private ApiReceiveInterface apiri;
     private boolean stored;
     protected MainActivity mContext;
-    private int onPauseTimes = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,21 +197,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_logout) {
-            try {
-                while (!Session.logout()) {
-                    // Esperar cliente ser limpado e tentar novamente
-                    Thread.sleep(1000);
-                }
-
-                // TODO Tentar avisar o logout ao Servidor
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                this.finish();
+            Session.logout();
+            if (ApiSendFacade.disconnect())
                 Toast.makeText(this, "Deslogado com sucesso!",Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-            }
+            else
+                Toast.makeText(this, "Deslogado na força bruta.",Toast.LENGTH_LONG).show();
+
+            this.finish();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_chat){
 
@@ -239,7 +232,6 @@ public class MainActivity extends AppCompatActivity
     public void notificateUser(final Message m) {
 
         final Notification notification;
-
 
         if (mContext.isPaused) {
             android.support.v4.app.NotificationCompat.Builder mBuilder;
@@ -290,7 +282,6 @@ public class MainActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
         isPaused = false;
-        onPauseTimes++;
 
         if (getIntent().getExtras() != null) {
             Intent intent = getIntent();
@@ -321,9 +312,7 @@ public class MainActivity extends AppCompatActivity
                 mRecyclerMessages.smoothScrollToPosition(adapterMessages.getItemCount());
             }
         });
-        if (onPauseTimes == 1) {
-            ApiSendFacade.requestHistory(0);
-        }
+        ApiSendFacade.requestHistory(0);
     }
 
     @Override

@@ -43,11 +43,12 @@ public class MessageProxy {
 
     private String addUser;
     private String delUser;
-    private String ownerLogin;
     private String text;
     private String timestamp;
     private String date;
     private String ownerName;
+    private String ownerLogin;
+    private String ownerEmail;
 
     private String ip;
     private String port;
@@ -91,6 +92,7 @@ public class MessageProxy {
         this.port = m.getPort();
         this.messageOwnerCount = m.getMessageOwnerCount();
         this.messageServerCount = m.getMessageServerCount();
+        this.ownerEmail = m.getOwnerEmail();
 
         this.text = m.getText();
     }
@@ -156,7 +158,14 @@ public class MessageProxy {
         this.error = error;
     }
     public String getOwnerName() {
-        return ownerName;
+        if (ownerName != null)
+            return ownerName;
+        else if (ownerLogin != null)
+            return ownerLogin;
+        else if (ownerEmail != null)
+            return ownerEmail;
+        else
+            return null;
     }
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
@@ -400,5 +409,8 @@ public class MessageProxy {
     }
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+    public void setOwnerEmail(String email) {
+        this.ownerEmail = email;
     }
 }

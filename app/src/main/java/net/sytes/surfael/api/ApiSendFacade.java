@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.Calendar;
 
 import net.sytes.surfael.api.control.serverinteraction.Connect;
+import net.sytes.surfael.api.control.serverinteraction.Disconnect;
 import net.sytes.surfael.api.control.serverinteraction.Send;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
@@ -111,6 +112,18 @@ public class ApiSendFacade {
 
 	public static void killService() {
 		apiReceiver.killThread();
+	}
+
+	public static boolean disconnect() {
+		try {
+			new Disconnect();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			ApiSendFacade.killService();
+		}
 	}
 
 	private static void startService() throws LocalException {

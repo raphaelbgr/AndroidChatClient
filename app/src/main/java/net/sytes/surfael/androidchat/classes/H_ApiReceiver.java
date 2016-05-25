@@ -125,6 +125,7 @@ public class H_ApiReceiver {
                             String message = row.get("Message");
                             String photo_url = row.get("Photo_URL");
                             String ownerid = row.get("OwnerID");
+                            String email = row.get("Email");
 
                             MessageProxy newMp = new MessageProxy();
                             newMp.setMessageProxyServerCount(id);
@@ -133,6 +134,7 @@ public class H_ApiReceiver {
                             newMp.setText(message);
                             newMp.setSenderPhotoUrl(photo_url);
                             newMp.setOwnerID(Integer.valueOf(ownerid));
+                            newMp.setOwnerEmail(email);
 
                             context.messageList.add(newMp);
                         }

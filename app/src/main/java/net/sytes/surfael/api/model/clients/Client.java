@@ -234,17 +234,21 @@ public class Client implements Serializable {
 
 	@Override
 	public String toString() {
-		if (this.getCollege() != null) {
-			if (this.college.equalsIgnoreCase("infnet")) {
+		if (this.getCollege() != null && !this.college.equalsIgnoreCase("null"))  {
+			if (this.college.equalsIgnoreCase("infnet") && !this.college.isEmpty()
+					&& !this.college.equalsIgnoreCase("") && !this.college.equalsIgnoreCase("null")) {
 				return this.name + " / " + this.getCourse() + this.getStartTrimester().substring(0, 4);
 			} else {
 				return this.name + " / " + this.getCollege();
 			}
-		} else if (this.name != null) {
+		} else if (this.name != null && this.name.equalsIgnoreCase("null")) {
 			return this.name;
-		} else if (this.email != null) {
+		} else if (this.email != null && this.email.equalsIgnoreCase("null")) {
 			return this.email;
-		} else return super.toString();
+		} else if (this.login != null && this.login.equalsIgnoreCase("null"))
+			return this.login;
+		else
+			return super.toString();
 	}
 	public int getLocalPort() {
 		return localPort;

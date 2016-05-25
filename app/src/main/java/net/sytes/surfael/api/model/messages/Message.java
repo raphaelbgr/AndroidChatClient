@@ -66,6 +66,7 @@ public class Message implements Serializable, Comparable<Message> {
 	private Long serverReceivedTimeLong;
 
 	private int senderId;
+	private String ownerEmail;
 
 	public Set<String> getSeen() {
 		return receivedby;
@@ -128,7 +129,14 @@ public class Message implements Serializable, Comparable<Message> {
 		this.error = error;
 	}
 	public String getOwnerName() {
-		return ownerName;
+		if (ownerName != null)
+			return ownerName;
+		else if (ownerLogin != null)
+			return ownerLogin;
+		else if (ownerEmail != null)
+			return ownerEmail;
+		else
+			return null;
 	}
 	public void setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
@@ -327,6 +335,7 @@ public class Message implements Serializable, Comparable<Message> {
 	public Message (String Message) {
 		setOwnerLogin("anonymous");
 		setOwnerName("Anonymous Owner");
+		setOwnerEmail("anonymou@email.com");
 		setIp("No IP");
 		setText(Message);
 		setCreationtime(Calendar.getInstance().getTimeInMillis());
@@ -404,5 +413,13 @@ public class Message implements Serializable, Comparable<Message> {
 
 	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public void setOwnerEmail(String email) {
+		this.ownerEmail = email;
+	}
+
+	public String getOwnerEmail() {
+		return this.ownerEmail;
 	}
 }
