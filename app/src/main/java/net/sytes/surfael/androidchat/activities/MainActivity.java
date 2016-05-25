@@ -1,13 +1,11 @@
 package net.sytes.surfael.androidchat.activities;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -36,7 +34,6 @@ import android.widget.Toast;
 
 
 import com.facebook.appevents.AppEventsLogger;
-import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 
 import net.sytes.surfael.androidchat.R;
@@ -54,7 +51,6 @@ import net.sytes.surfael.data.MessageProxy;
 import net.sytes.surfael.data.Session;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -93,6 +89,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(R.id.nav_chat);
         navigationView.setNavigationItemSelectedListener(this);
 
         messageList = Session.getHistory();
@@ -123,6 +120,7 @@ public class MainActivity extends AppCompatActivity
         ImageView profilePicDrawer = (ImageView) headerView.findViewById(R.id.drawer_profile_pic);
         Picasso.with(this)
                 .load(client.getPhotoUrl())
+                .error(R.drawable.generic_user)
                 .resize(170, 170)
                 .transform(new CircleTransform())
                 .into(profilePicDrawer);
@@ -215,6 +213,8 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
             }
+
+        } else if (id == R.id.nav_chat){
 
         }
 //        }

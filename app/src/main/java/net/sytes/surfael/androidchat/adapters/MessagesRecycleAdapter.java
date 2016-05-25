@@ -97,6 +97,7 @@ public class MessagesRecycleAdapter extends  RecyclerView.Adapter<MessagesRecycl
             Picasso.with(mContext)
                     .load(messages.get(position).getSenderPhotoUrl())
                     .resize(150, 150)
+                    .error(R.drawable.generic_user)
 //                    .transform(new CircleTransform())
                     .into(viewHolder.getProfilePicContainer())
             ;

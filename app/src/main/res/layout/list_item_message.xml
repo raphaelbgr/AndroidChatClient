@@ -32,8 +32,8 @@
                 android:layout_gravity="top">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50sp"
+                    android:layout_height="50sp"
                     android:id="@+id/message_profile_pic"
                     android:contentDescription="Profile chat pic"
                     android:layout_gravity="top|center_vertical"
