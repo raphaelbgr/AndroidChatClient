@@ -85,7 +85,7 @@ public class ApiSendFacade {
 	public static void aSyncConnect(final String ip, final int port,
 									final ApiReceiveInterface apiBridge, final String mEmail,
 									final String mPassword, final boolean crypt) throws LocalException, IOException {
-		if (!Status.getInstance().isConnected()) {
+//		if (!Status.getInstance().isConnected()) {
 			Thread t1 = new Thread(new Runnable() {
 
 				@Override
@@ -100,7 +100,7 @@ public class ApiSendFacade {
 				}
 			});
 			t1.start();
-		}
+//		}
 	}
 
 	public static void overwriteListener(ApiReceiveInterface newListener) {

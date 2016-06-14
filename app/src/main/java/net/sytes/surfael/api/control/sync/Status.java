@@ -2,7 +2,7 @@ package net.sytes.surfael.api.control.sync;
 
 public class Status {
 
-	private boolean connected;
+	private boolean connected = false;
 	
 	public static final String VERSION = "0.9.21";
 	
