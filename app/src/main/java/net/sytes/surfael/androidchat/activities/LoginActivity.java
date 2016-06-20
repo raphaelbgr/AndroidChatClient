@@ -3,22 +3,19 @@ package net.sytes.surfael.androidchat.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,32 +28,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.login.widget.LoginButton;
+
 import net.sytes.surfael.androidchat.R;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.sytes.surfael.androidchat.classes.H_ApiReceiver;
 import net.sytes.surfael.androidchat.classes.H_FacebookCallBackFactory;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
-import net.sytes.surfael.api.control.classes.MD5;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
-import net.sytes.surfael.api.model.exceptions.ServerException;
-import net.sytes.surfael.api.model.messages.DisconnectionMessage;
-import net.sytes.surfael.api.model.messages.Message;
-import net.sytes.surfael.api.model.messages.NormalMessage;
-import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.Session;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A login screen that offers login via email/password.
@@ -330,7 +317,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             try {
                 ApiSendFacade.connect(Session.SERVER_IP, Session.SERVER_PORT, apiri, mEmail, mPassword, true);
-//                ApiSendFacade.connect("192.168.2.11", 2001, apiri, mEmail, mPassword);
                 return true;
             } catch (LocalException e) {
                 e.printStackTrace();

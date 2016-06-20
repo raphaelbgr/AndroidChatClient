@@ -12,26 +12,10 @@ public class Send {
 	ClientStream stream = ClientStream.getInstance();
 
 	public Send(Object o) throws IOException, LocalException {
-		if (Status.getInstance().isConnected()) {
-			if(Status.getInstance().isConnected()) {
+		if (Status.getInstance().isConnected())
 				stream.sendObject(o);	//SENDS THE MESSAGE
-			}
-		} else {
+		else
 			throw new LocalException("Not connected.");
-		}
 	}
-
-	public boolean send(Object o) throws UnknownHostException, IOException, LocalException {
-		if (Status.getInstance().isConnected()) {
-			if(Status.getInstance().isConnected()) {
-				stream.sendObject(o);	//SENDS THE MESSAGE
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			throw new LocalException("Not connected.");
-		}
-	}
-
 }
+

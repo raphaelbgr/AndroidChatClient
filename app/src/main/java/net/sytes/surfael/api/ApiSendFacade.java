@@ -1,19 +1,18 @@
 package net.sytes.surfael.api;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.Calendar;
-
 import net.sytes.surfael.api.control.serverinteraction.Connect;
 import net.sytes.surfael.api.control.serverinteraction.Disconnect;
 import net.sytes.surfael.api.control.serverinteraction.Send;
+import net.sytes.surfael.api.control.sync.Status;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
-import net.sytes.surfael.api.control.sync.Status;
 import net.sytes.surfael.api.model.messages.Message;
 import net.sytes.surfael.api.model.messages.NormalMessage;
 import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.Session;
+
+import java.io.IOException;
+import java.util.Calendar;
 
 public class ApiSendFacade {
 
@@ -23,25 +22,55 @@ public class ApiSendFacade {
 	public static boolean send(Object o) {
 		try {
 			new Send(o);
-		} catch (IOException | LocalException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
 
-	public static boolean sendNormalMessage(String message) {
-		try {
-			NormalMessage nm = new NormalMessage();
-			nm = (NormalMessage) populateMessage(nm, message);
-			new Send(nm);
-		} catch (IOException | LocalException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+	public static void sendNormalMessageAsync(final String message) {
+
+		Thread t1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						NormalMessage nm = new NormalMessage();
+						nm = (NormalMessage) populateMessage(nm, message);
+						new Send(nm);
+						break;
+					} catch (Exception e) {
+						e.printStackTrace();
+						reconnectAsync();
+						threadSpleep(5000);
+					}
+				}
+			}
+		});
+		t1.start();
 	}
-	
+
+	public static void reconnectAsync() {
+		if (Status.getInstance().isConnected())
+			killService();
+		if (apiReceiver != null) {
+			Thread t2 = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						new Connect(Session.SERVER_IP, Session.SERVER_PORT);
+						t1 = new Thread(apiReceiver);
+						t1.start();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			t2.start();
+		}
+	}
+
 	public static void connect(String ip, int port, ApiReceiveInterface apiBridge, String mEmail, String mPassword, boolean crypt) throws LocalException, IOException {
 		if (Status.getInstance().isConnected()) {
 			killService();
@@ -72,9 +101,7 @@ public class ApiSendFacade {
 
 					t1 = new Thread(apiReceiver);
 					t1.start();
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -85,22 +112,19 @@ public class ApiSendFacade {
 	public static void aSyncConnect(final String ip, final int port,
 									final ApiReceiveInterface apiBridge, final String mEmail,
 									final String mPassword, final boolean crypt) throws LocalException, IOException {
-//		if (!Status.getInstance().isConnected()) {
-			Thread t1 = new Thread(new Runnable() {
+		Thread t1 = new Thread(new Runnable() {
 
-				@Override
-				public void run() {
-					try {
-						connect(ip, port, apiBridge, mEmail, mPassword, crypt);
-					} catch (LocalException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+			@Override
+			public void run() {
+				try {
+					connect(ip, port, apiBridge, mEmail, mPassword, crypt);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			});
-			t1.start();
-//		}
+			}
+		});
+		t1.start();
+
 	}
 
 	public static void overwriteListener(ApiReceiveInterface newListener) {
@@ -123,31 +147,6 @@ public class ApiSendFacade {
 			return false;
 		} finally {
 			ApiSendFacade.killService();
-		}
-	}
-
-	private static void startService() throws LocalException {
-		if (apiReceiver == null) {
-			throw new LocalException("No listener found, use overwriteListener()");
-		} else if (Status.getInstance().isConnected()){
-			killService();
-		}
-		t1 = new Thread(apiReceiver);
-		t1.start();
-	}
-
-	public static boolean connect(String ip, int port, ApiReceiveInterface apiBridge) throws LocalException {
-		if (Status.getInstance().isConnected()){
-			killService();
-		}
-		try {
-			new Connect(ip, port);
-			Thread t1 = new Thread(new ApiReceiveFromServerThread(apiBridge));
-			t1.start();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
 		}
 	}
 	
@@ -182,6 +181,14 @@ public class ApiSendFacade {
 		sm.setRowLimit(limit);
 
         return ApiSendFacade.send(sm);
+	}
+
+	private static void threadSpleep(int milis) {
+		try {
+			Thread.sleep(milis);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

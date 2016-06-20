@@ -41,6 +41,7 @@ import net.sytes.surfael.androidchat.R;
 import net.sytes.surfael.androidchat.adapters.MessagesRecycleAdapter;
 import net.sytes.surfael.androidchat.classes.CircleTransform;
 import net.sytes.surfael.androidchat.classes.H_ApiReceiver;
+import net.sytes.surfael.androidchat.util.ChatUtils;
 import net.sytes.surfael.androidchat.util.SimpleDividerItemDecoration;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
@@ -138,8 +139,9 @@ public class MainActivity extends AppCompatActivity
                     snackbar.setActionTextColor(Color.MAGENTA);
                     snackbar.show();
                 } else {
-                    ApiSendFacade.sendNormalMessage(text);
+                    ApiSendFacade.sendNormalMessageAsync(text);
                     mEditText.setText("");
+                    ChatUtils.hideSoftKeyboard(MainActivity.this);
                 }
             }
         });

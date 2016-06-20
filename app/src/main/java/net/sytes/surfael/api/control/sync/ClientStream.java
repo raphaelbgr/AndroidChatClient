@@ -51,15 +51,4 @@ public class ClientStream {
 		Object o = ois.readObject();
 		return o;
 	}
-
-	public boolean checkOnlineStatus() {
-		if(this.sock != null && this.sock.isConnected()) {
-			Status.getInstance().setConnected(true);
-			return true;
-		} else {
-			Status.getInstance().setConnected(false);
-			return false;
-		}
-	}
-
 }
