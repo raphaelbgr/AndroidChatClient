@@ -1,5 +1,6 @@
 package net.sytes.surfael.androidchat.activities;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -45,6 +46,7 @@ import net.sytes.surfael.androidchat.util.ChatUtils;
 import net.sytes.surfael.androidchat.util.SimpleDividerItemDecoration;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
+import net.sytes.surfael.api.interfaces.DisconnectCallback;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
 import net.sytes.surfael.api.model.messages.Message;
@@ -200,10 +202,27 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_logout) {
             Session.logout();
-            if (ApiSendFacade.disconnect())
-                Toast.makeText(this, "Deslogado com sucesso!",Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(this, "Deslogado na força bruta.",Toast.LENGTH_LONG).show();
+            ApiSendFacade.disconnectAsync(new DisconnectCallback() {
+                @Override
+                public void onSuccess() {
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "Deslogado com sucesso!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure() {
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "Deslogado na força bruta.",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            });
 
             this.finish();
             Intent intent = new Intent(this, LoginActivity.class);

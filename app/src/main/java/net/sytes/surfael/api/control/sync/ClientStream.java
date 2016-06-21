@@ -35,14 +35,15 @@ public class ClientStream {
 	private ClientStream() {
 	}
 
-	public void sendObject(Object o) throws IOException {
+	public boolean sendObject(Object o) throws IOException {
 		if (sock != null) {
 			if (this.sock.getOutputStream() != null) {
 				oos = new ObjectOutputStream(this.sock.getOutputStream());
 				oos.writeObject(o);
 				oos.flush();
-			}
-		}
+				return true;
+			} else return false;
+		} else return false;
 	}
 
 	public Object receiveMessage() throws IOException, ClassNotFoundException {

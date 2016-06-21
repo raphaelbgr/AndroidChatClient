@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.sytes.surfael.api.control.sync.ClientStream;
+import net.sytes.surfael.api.interfaces.DisconnectCallback;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.messages.DisconnectionMessage;
 

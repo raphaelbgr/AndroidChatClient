@@ -4,6 +4,7 @@ import net.sytes.surfael.api.control.serverinteraction.Connect;
 import net.sytes.surfael.api.control.serverinteraction.Disconnect;
 import net.sytes.surfael.api.control.serverinteraction.Send;
 import net.sytes.surfael.api.control.sync.Status;
+import net.sytes.surfael.api.interfaces.DisconnectCallback;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
 import net.sytes.surfael.api.model.messages.Message;
@@ -138,16 +139,23 @@ public class ApiSendFacade {
 		apiReceiver.killThread();
 	}
 
-	public static boolean disconnect() {
-		try {
-			new Disconnect();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			ApiSendFacade.killService();
-		}
+	public static void disconnectAsync(final DisconnectCallback callback) {
+		Thread t1 = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					new Disconnect();
+					callback.onSuccess();
+				} catch (IOException e) {
+					e.printStackTrace();
+					callback.onFailure();
+				} finally {
+					ApiSendFacade.killService();
+				}
+			}
+		});
+		t1.start();
 	}
 	
 	public static Client login(String login, String password, boolean crypt) {
