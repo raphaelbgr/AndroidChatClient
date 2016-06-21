@@ -118,6 +118,7 @@ public class ApiSendFacade {
 			@Override
 			public void run() {
 				try {
+					Thread.sleep(5000);
 					connect(ip, port, apiBridge, mEmail, mPassword, crypt);
 					requestHistory(5000);
 				} catch (Exception e) {

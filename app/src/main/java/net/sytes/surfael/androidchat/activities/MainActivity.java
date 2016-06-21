@@ -46,6 +46,7 @@ import net.sytes.surfael.androidchat.util.ChatUtils;
 import net.sytes.surfael.androidchat.util.SimpleDividerItemDecoration;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
+import net.sytes.surfael.api.control.sync.Status;
 import net.sytes.surfael.api.interfaces.DisconnectCallback;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.LocalException;
@@ -316,8 +317,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        ApiSendFacade.overwriteListener(H_ApiReceiver.buildApiCallbackForChatMessagesWithoutLogin(this));
-
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
 
@@ -347,7 +346,8 @@ public class MainActivity extends AppCompatActivity
 
         try {
             ApiSendFacade.overwriteListener(apiri);
-            ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri,
+            if (!Status.getInstance().isConnected())
+                ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri,
                     Session.getCurrentUser().getEmail(), Session.getCurrentUser().getMD5Password(), false);
         } catch (LocalException e) {
             e.printStackTrace();

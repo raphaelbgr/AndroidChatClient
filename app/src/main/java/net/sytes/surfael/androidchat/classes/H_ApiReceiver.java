@@ -230,7 +230,7 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveServerHistory(History h) {
-
+                System.out.printf(h.toString());
             }
 
         };
@@ -304,7 +304,7 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveServerHistory(History h) {
-
+                System.out.printf(h.toString());
             }
 
         };
