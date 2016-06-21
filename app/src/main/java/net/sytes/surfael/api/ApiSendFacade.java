@@ -63,6 +63,7 @@ public class ApiSendFacade {
 						new Connect(Session.SERVER_IP, Session.SERVER_PORT);
 						t1 = new Thread(apiReceiver);
 						t1.start();
+						requestHistory(5000);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -99,7 +100,6 @@ public class ApiSendFacade {
 					new Connect(ip, port);
 					apiReceiver = new ApiReceiveFromServerThread(apiBridge);
 					apiReceiver.setFacebookClient(client);
-
 					t1 = new Thread(apiReceiver);
 					t1.start();
 				} catch (Exception e) {
@@ -119,6 +119,7 @@ public class ApiSendFacade {
 			public void run() {
 				try {
 					connect(ip, port, apiBridge, mEmail, mPassword, crypt);
+					requestHistory(5000);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

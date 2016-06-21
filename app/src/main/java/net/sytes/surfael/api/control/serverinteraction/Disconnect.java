@@ -20,19 +20,4 @@ public class Disconnect {
 		stream.sendObject(dm);
 	}
 
-	public Disconnect(Client c) throws UnknownHostException, IOException {
-		ClientStream stream 	= ClientStream.getInstance();
-		DisconnectionMessage dm = new DisconnectionMessage();
-		dm = (DisconnectionMessage) dm.buildDisconnectMessage();
-		dm.setOwnerName(c.getName());
-		stream.sendObject(dm);
-	}
-
-	@SuppressWarnings("unused")
-	private String getTimestamp() {
-		DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-		String dateFormatted = formatter.format(new Date());
-		return "["+dateFormatted+"]" + " ";
-	}
-
 }

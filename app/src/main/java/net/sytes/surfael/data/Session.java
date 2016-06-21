@@ -18,9 +18,9 @@ import java.util.List;
  * Created by Raphael on 10/12/2015.
  */
 public class Session {
-    public static final String SERVER_IP = "54.232.241.237";
+//    public static final String SERVER_IP = "54.232.241.237";
 //    public static final String SERVER_IP = "10.5.5.132";
-//    public static final String SERVER_IP = "192.168.2.11";
+    public static final String SERVER_IP = "192.168.1.11";
 
     public static final int SERVER_PORT = 2001;
 
@@ -29,8 +29,7 @@ public class Session {
     public static void startHawk(Context context) {
         Hawk.init(context)
                 .setEncryptionMethod(HawkBuilder.EncryptionMethod.NO_ENCRYPTION)
-//                .setStorage(HawkBuilder.newSharedPrefStorage(context))
-                .setStorage(HawkBuilder.newSqliteStorage(context))
+                .setStorage(HawkBuilder.newSharedPrefStorage(context))
                 .setLogLevel(LogLevel.FULL)
                 .build();
     }
@@ -47,13 +46,11 @@ public class Session {
         if (currentUser == null) {
             if (Hawk.contains("currentUser")) {
                 ClientProxy clientProxy = Hawk.get("currentUser");
-                Client client = null;
-                if (clientProxy != null) {
-                    client = clientProxy.buildClient(clientProxy);
-                }
-                return client;
-            } else return null;
-        } else return currentUser;
+                if (clientProxy != null)
+                    currentUser = clientProxy.buildClient(clientProxy);
+            }
+        }
+        return currentUser;
     }
 
     public static Client mergeFacebookClient(Client client, Client fbClient) {
@@ -93,6 +90,6 @@ public class Session {
 
     public static boolean logout() {
         currentUser = null;
-        return Hawk.remove("messageList") && Hawk.remove("currentUser") && Hawk.clear();
+        return Hawk.clear();
     }
 }
