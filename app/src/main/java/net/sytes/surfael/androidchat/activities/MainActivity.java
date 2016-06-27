@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity
 
         mContext = this;
 
+        buildApiListenerWithoutLogin();
+
         Client client = Session.getCurrentUser();
 
         setContentView(R.layout.activity_main);
@@ -306,14 +308,12 @@ public class MainActivity extends AppCompatActivity
             Intent intent = getIntent();
             Bundle bundle = intent.getExtras();
             stored = bundle.getBoolean("storedUser");
-            if (stored || Session.getCurrentUser() != null) {
-                buildApiListenerWithoutLogin();
-            } else {
-                if (Session.getCurrentUser() == null) {
-                    intent = new Intent(this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
+
+            // Kicks the user out in case of cache == NULL
+            if (!stored || Session.getCurrentUser() == null) {
+                intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
         }
 
