@@ -286,14 +286,26 @@ public class H_ApiReceiver {
             }
 
             @Override
-            public void onReceiveServerException(ServerException e) {
+            public void onReceiveServerException(final ServerException e) {
                 Log.d("server_callback", e.toString());
+                context.runOnUiThread(new Runnable() {
+                      @Override
+                      public void run() {
+                          Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                      }
+                  });
             }
 
             @Override
-            public void onConnectionError(Exception e) {
+            public void onConnectionError(final Exception e) {
                 if (e.getLocalizedMessage() != null) {
                     Log.d("server_callback", e.getLocalizedMessage());
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
 

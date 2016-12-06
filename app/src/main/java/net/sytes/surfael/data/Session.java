@@ -18,9 +18,9 @@ import java.util.List;
  * Created by Raphael on 10/12/2015.
  */
 public class Session {
-//    public static final String SERVER_IP = "54.232.241.237";
+    public static final String SERVER_IP = "10.10.2.147";
 //    public static final String SERVER_IP = "10.5.5.132";
-    public static final String SERVER_IP = "192.168.1.11";
+//    public static final String SERVER_IP = "192.168.1.11";
 
     public static final int SERVER_PORT = 2001;
 

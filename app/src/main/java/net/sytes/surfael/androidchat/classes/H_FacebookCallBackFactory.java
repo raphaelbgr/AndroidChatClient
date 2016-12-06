@@ -62,7 +62,8 @@ public class H_FacebookCallBackFactory {
                                     try {
 //                                        client.setBirthDate(DateFormat.getDateInstance().parse(birthday));
                                         ApiReceiveInterface apiri = H_ApiReceiver.buildApiCallbackForChatMessagesOnLoginScreenForFacebook(context, client);
-                                        ApiSendFacade.connectFacebookAsync(Session.SERVER_IP, Session.SERVER_PORT, apiri, client);
+                                        ApiSendFacade.connectFacebookAsync(Session.SERVER_IP,
+                                                Session.SERVER_PORT, apiri, client, context);
                                     } catch (LocalException e) {
                                         e.printStackTrace();
                                     } catch (IOException e) {

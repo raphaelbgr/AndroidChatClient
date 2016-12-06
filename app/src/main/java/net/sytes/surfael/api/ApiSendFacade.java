@@ -1,5 +1,10 @@
 package net.sytes.surfael.api;
 
+import android.app.Activity;
+import android.os.Handler;
+import android.widget.Toast;
+
+import net.sytes.surfael.androidchat.activities.LoginActivity;
 import net.sytes.surfael.api.control.serverinteraction.Connect;
 import net.sytes.surfael.api.control.serverinteraction.Disconnect;
 import net.sytes.surfael.api.control.serverinteraction.Send;
@@ -89,7 +94,11 @@ public class ApiSendFacade {
 		t1.start();
 	}
 
-	public static void connectFacebookAsync(final String ip, final int port, final ApiReceiveInterface apiBridge, final Client client) throws LocalException, IOException {
+	public static void connectFacebookAsync(final String ip, final int port,
+											final ApiReceiveInterface apiBridge,
+											final Client client, final Activity context)
+			throws LocalException, IOException {
+
 		if (Status.getInstance().isConnected()) {
 			killService();
 		}
@@ -102,8 +111,14 @@ public class ApiSendFacade {
 					apiReceiver.setFacebookClient(client);
 					t1 = new Thread(apiReceiver);
 					t1.start();
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
+					context.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+						}
+					});
 				}
 			}
 		});
