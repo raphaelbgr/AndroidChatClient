@@ -1,6 +1,9 @@
 package net.sytes.surfael.api;
 
+import android.content.Context;
+
 import java.io.IOException;
+import java.net.SocketException;
 
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
@@ -13,6 +16,7 @@ import net.sytes.surfael.api.model.messages.History;
 import net.sytes.surfael.api.model.messages.Message;
 import net.sytes.surfael.api.model.messages.NormalMessage;
 import net.sytes.surfael.api.model.messages.ServerMessage;
+import net.sytes.surfael.data.Session;
 
 public class ApiReceiveFromServerThread implements Runnable {
 
@@ -23,6 +27,11 @@ public class ApiReceiveFromServerThread implements Runnable {
 	private String email;
 	private String password;
 	private boolean crypt;
+	private Context context;
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
 
 	@Override
 	public void run() {
@@ -53,13 +62,16 @@ public class ApiReceiveFromServerThread implements Runnable {
 					Status.getInstance().setLoggedIn(true);
 					api.onReceiveClient((Client) o);
 				} else if (o instanceof ServerException) {
-					api.onReceiveServerException((ServerException) o);
+					Status.getInstance().setConnected(false);
+					Status.getInstance().setLoggedIn(false);
+					suicide = true;
+					api.onConnectionError(new Exception(((ServerException) o).getMessage()));
 				} else if (o instanceof History) {
 					api.onReceiveServerHistory((History) o);
 				}
 			} catch (ClassNotFoundException | IOException e) {
 				Status.getInstance().setConnected(false);
-				Status.getInstance().setLoggedIn(false);
+//				Status.getInstance().setLoggedIn(false);
 				e.printStackTrace();
 				suicide = true;
 				api.onConnectionError(e);

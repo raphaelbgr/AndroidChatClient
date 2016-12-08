@@ -27,4 +27,6 @@ public interface ApiReceiveInterface {
 	public void onUserMessageReceived(Message m);
 
 	public void onReceiveServerHistory(History h);
+
+	void onConnected();
 }

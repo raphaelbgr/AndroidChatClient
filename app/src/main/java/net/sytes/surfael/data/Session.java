@@ -3,15 +3,10 @@ package net.sytes.surfael.data;
 import android.content.Context;
 
 import com.orhanobut.hawk.Hawk;
-import com.orhanobut.hawk.HawkBuilder;
-import com.orhanobut.hawk.LogLevel;
 
-import net.sytes.surfael.androidchat.adapters.MessagesRecycleAdapter;
 import net.sytes.surfael.api.model.clients.Client;
-import net.sytes.surfael.api.model.messages.Message;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,18 +22,14 @@ public class Session {
     private static Client currentUser;
 
     public static void startHawk(Context context) {
-        Hawk.init(context)
-                .setEncryptionMethod(HawkBuilder.EncryptionMethod.NO_ENCRYPTION)
-                .setStorage(HawkBuilder.newSharedPrefStorage(context))
-                .setLogLevel(LogLevel.FULL)
-                .build();
+        Hawk.init(context).build();
     }
 
     public static void setCurrentUser(Client client) {
         ClientProxy clientProxy = new ClientProxy(client);
         currentUser = client;
 
-        Hawk.remove("currentUser");
+        Hawk.delete("currentUser");
         Hawk.put("currentUser", clientProxy);
     }
 
@@ -75,7 +66,7 @@ public class Session {
     public static synchronized void storeHistory(List<MessageProxy> messageList) {
         synchronized (messageList) {
             if (Hawk.contains("messageList")) {
-                Hawk.remove("messageList");
+                Hawk.delete("messageList");
             }
             Hawk.put("messageList", messageList);
         }
@@ -90,6 +81,6 @@ public class Session {
 
     public static boolean logout() {
         currentUser = null;
-        return Hawk.clear();
+        return Hawk.deleteAll();
     }
 }

@@ -1,6 +1,6 @@
 package net.sytes.surfael.api.model.exceptions;
 
-public class ServerException extends Throwable {
+public class ServerException extends Exception {
 
 	/**
 	 * 	Serializable Exception

@@ -1,10 +1,13 @@
 package net.sytes.surfael.api;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import net.sytes.surfael.androidchat.activities.LoginActivity;
+import net.sytes.surfael.androidchat.activities.MainActivity;
 import net.sytes.surfael.api.control.serverinteraction.Connect;
 import net.sytes.surfael.api.control.serverinteraction.Disconnect;
 import net.sytes.surfael.api.control.serverinteraction.Send;
@@ -18,12 +21,21 @@ import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.Session;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.Calendar;
+
+import static android.R.id.message;
 
 public class ApiSendFacade {
 
 	private static Thread t1;
 	private static ApiReceiveFromServerThread apiReceiver;
+	private static ApiReceiveInterface apiBridge;
+	private static Activity context;
+
+	public static void setContext(Activity context) {
+		ApiSendFacade.context = context;
+	}
 
 	public static boolean send(Object o) {
 		try {
@@ -35,7 +47,9 @@ public class ApiSendFacade {
 		return true;
 	}
 
-	public static void sendNormalMessageAsync(final String message) {
+	public static void sendNormalMessageAsync(ApiReceiveInterface apiri,
+											  final EditText editText, final String message) {
+		apiBridge = apiri;
 
 		Thread t1 = new Thread(new Runnable() {
 			@Override
@@ -45,10 +59,20 @@ public class ApiSendFacade {
 						NormalMessage nm = new NormalMessage();
 						nm = (NormalMessage) populateMessage(nm, message);
 						new Send(nm);
+						context.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								editText.setText("");
+							}
+						});
 						break;
 					} catch (Exception e) {
 						e.printStackTrace();
-						reconnectAsync();
+						if (apiBridge != null)
+							apiBridge.onConnectionError(e);
+						if (!Status.getInstance().isConnected())
+							reconnectAsync();
+					} finally {
 						threadSpleep(5000);
 					}
 				}
@@ -64,13 +88,18 @@ public class ApiSendFacade {
 			Thread t2 = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						new Connect(Session.SERVER_IP, Session.SERVER_PORT);
-						t1 = new Thread(apiReceiver);
-						t1.start();
-						requestHistory(5000);
-					} catch (Exception e) {
-						e.printStackTrace();
+					while (Status.getInstance().isConnected() == false) {
+						try {
+							new Connect(Session.SERVER_IP, Session.SERVER_PORT);
+							t1 = new Thread(apiReceiver);
+							t1.start();
+							Status.getInstance().setConnected(true);
+							requestHistory(5000);
+							apiBridge.onConnected();
+						} catch (Exception e) {
+							e.printStackTrace();
+							apiBridge.onConnectionError(e);
+						}
 					}
 				}
 			});
@@ -78,7 +107,8 @@ public class ApiSendFacade {
 		}
 	}
 
-	public static void connect(String ip, int port, ApiReceiveInterface apiBridge, String mEmail, String mPassword, boolean crypt) throws LocalException, IOException {
+	public static void connect(String ip, int port, ApiReceiveInterface apiBridge,
+							   String mEmail, String mPassword, boolean crypt) throws LocalException, IOException {
 		if (Status.getInstance().isConnected()) {
 			killService();
 		}
@@ -98,6 +128,7 @@ public class ApiSendFacade {
 											final ApiReceiveInterface apiBridge,
 											final Client client, final Activity context)
 			throws LocalException, IOException {
+		ApiSendFacade.apiBridge = apiBridge;
 
 		if (Status.getInstance().isConnected()) {
 			killService();
@@ -113,12 +144,7 @@ public class ApiSendFacade {
 					t1.start();
 				} catch (final Exception e) {
 					e.printStackTrace();
-					context.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-						}
-					});
+					apiBridge.onConnectionError(e);
 				}
 			}
 		});
@@ -138,6 +164,7 @@ public class ApiSendFacade {
 					requestHistory(5000);
 				} catch (Exception e) {
 					e.printStackTrace();
+					apiBridge.onConnectionError(e);
 				}
 			}
 		});

@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity
 
         mContext = this;
 
-        buildApiListenerWithoutLogin();
-
         Client client = Session.getCurrentUser();
 
         setContentView(R.layout.activity_main);
@@ -142,8 +140,8 @@ public class MainActivity extends AppCompatActivity
                     snackbar.setActionTextColor(Color.MAGENTA);
                     snackbar.show();
                 } else {
-                    ApiSendFacade.sendNormalMessageAsync(text);
-                    mEditText.setText("");
+                    ApiSendFacade.setContext(MainActivity.this);
+                    ApiSendFacade.sendNormalMessageAsync(apiri, mEditText, text);
                     ChatUtils.hideSoftKeyboard(MainActivity.this);
                 }
             }
@@ -329,7 +327,9 @@ public class MainActivity extends AppCompatActivity
                 mRecyclerMessages.smoothScrollToPosition(adapterMessages.getItemCount());
             }
         });
-        ApiSendFacade.requestHistory(0);
+//        ApiSendFacade.requestHistory(0);
+//        buildApiListenerWithoutLogin();
+        login();
     }
 
     @Override
@@ -341,14 +341,14 @@ public class MainActivity extends AppCompatActivity
         AppEventsLogger.deactivateApp(this);
     }
 
-    private void buildApiListenerWithoutLogin() {
-        apiri = H_ApiReceiver.buildApiCallbackForChatMessagesWithoutLogin(this);
-
+    private void login() {
         try {
+            apiri = H_ApiReceiver.buildApiCallbackForChatMessagesWithoutLogin(this);
+
             ApiSendFacade.overwriteListener(apiri);
             if (!Status.getInstance().isConnected())
                 ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri,
-                    Session.getCurrentUser().getEmail(), Session.getCurrentUser().getMD5Password(), false);
+                        Session.getCurrentUser().getEmail(), Session.getCurrentUser().getMD5Password(), false);
         } catch (LocalException e) {
             e.printStackTrace();
             if (!isPaused) {

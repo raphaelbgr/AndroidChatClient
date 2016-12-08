@@ -1,7 +1,6 @@
 package net.sytes.surfael.androidchat.classes;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.widget.Toast;
@@ -10,6 +9,7 @@ import net.sytes.surfael.androidchat.activities.LoginActivity;
 import net.sytes.surfael.androidchat.activities.MainActivity;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.control.classes.MD5;
+import net.sytes.surfael.api.control.sync.Status;
 import net.sytes.surfael.api.model.clients.Client;
 import net.sytes.surfael.api.model.exceptions.ServerException;
 import net.sytes.surfael.api.model.messages.DisconnectionMessage;
@@ -20,8 +20,6 @@ import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.MessageProxy;
 import net.sytes.surfael.data.Session;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,11 +31,10 @@ import java.util.HashMap;
 public class H_ApiReceiver {
 
     public static ApiReceiveInterface buildApiCallbackForChatMessagesWithoutLogin(final MainActivity context) {
-
-        ApiReceiveInterface apiri = new ApiReceiveInterface() {
+        return new ApiReceiveInterface() {
             @Override
             public void onReceive(Object o) {
-                Log.d("server_callback", o.toString());
+                Log.d("server_callback102", o.toString());
             }
 
             @Override
@@ -80,25 +77,41 @@ public class H_ApiReceiver {
 
             @Override
             public void onReceiveClient(Client client) {
-//                Log.d("server_callback", client.toString());
+                Log.d("server_callback", client.toString());
 
                 Session.setCurrentUser(client);
 
-                Snackbar snackbar = Snackbar.make(context.mSendButton, "Connected.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null);
-                snackbar.setActionTextColor(Color.MAGENTA);
-                snackbar.show();
-            }
-            @Override
-            public void onReceiveServerException(ServerException e) {
-                Log.d("server_callback", e.toString());
+                context.runOnUiThread(new Runnable() {
+                    public void run() {
+                          Snackbar snackbar = Snackbar.make(context.mSendButton, "Connected.", Snackbar.LENGTH_LONG)
+                                  .setAction("Action", null);
+                          snackbar.show();
+                    }
+                });
             }
 
             @Override
-            public void onConnectionError(Exception e) {
-                if (e.getLocalizedMessage() != null) {
-//                    Log.d("server_callback", e.getLocalizedMessage());
-                }
+            public void onReceiveServerException(final ServerException e) {
+                Log.d("server_callback100", e.toString());
+                context.runOnUiThread(new Runnable() {
+                    public void run() {
+                        String disconnected = e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Disconnected";
+                        Snackbar.make(context.mSendButton, disconnected, Snackbar.LENGTH_LONG).show();
+                    }
+                });
+//                Status.getInstance().setConnected(false);
+            }
+
+            @Override
+            public void onConnectionError(final Exception e) {
+                Log.d("server_callback101", e.toString());
+                Status.getInstance().setConnected(false);
+                context.runOnUiThread(new Runnable() {
+                  public void run() {
+                      String disconnected = e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Disconnected";
+                      Snackbar.make(context.mSendButton, disconnected, Snackbar.LENGTH_LONG).show();
+                  }
+              });
             }
 
             @Override
@@ -159,9 +172,16 @@ public class H_ApiReceiver {
                     });
                 }
             }
-        };
 
-        return apiri;
+            @Override
+            public void onConnected() {
+                context.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Snackbar.make(context.mSendButton, "Connected", Snackbar.LENGTH_LONG).show();
+                    }
+                });
+            }
+        };
     }
 
     public static ApiReceiveInterface buildApiCallbackForChatMessagesOnLoginScreen(final LoginActivity context, final String mPassword) {
@@ -231,6 +251,11 @@ public class H_ApiReceiver {
             @Override
             public void onReceiveServerHistory(History h) {
                 System.out.printf(h.toString());
+            }
+
+            @Override
+            public void onConnected() {
+
             }
 
         };
@@ -317,6 +342,11 @@ public class H_ApiReceiver {
             @Override
             public void onReceiveServerHistory(History h) {
                 System.out.printf(h.toString());
+            }
+
+            @Override
+            public void onConnected() {
+
             }
 
         };

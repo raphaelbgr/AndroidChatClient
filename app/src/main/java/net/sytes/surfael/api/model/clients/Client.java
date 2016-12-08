@@ -232,24 +232,38 @@ public class Client implements Serializable {
 		this.version = version;
 	}
 
+	private boolean isNullString(String string) {
+		if (string != null && !string.equalsIgnoreCase("")
+				&& !string.equalsIgnoreCase("null") ) {
+			return false;
+		} else return true;
+	}
+
 	@Override
 	public String toString() {
-		if (this.getCollege() != null && !this.college.equalsIgnoreCase("null"))  {
-			if (this.college.equalsIgnoreCase("infnet") && !this.college.isEmpty()
-					&& !this.college.equalsIgnoreCase("") && !this.college.equalsIgnoreCase("null")) {
-				return this.name + " / " + this.getCourse() + this.getStartTrimester().substring(0, 4);
-			} else {
-				return this.name + " / " + this.getCollege();
-			}
-		} else if (this.name != null && this.name.equalsIgnoreCase("null")) {
-			return this.name;
-		} else if (this.email != null && this.email.equalsIgnoreCase("null")) {
-			return this.email;
-		} else if (this.login != null && this.login.equalsIgnoreCase("null"))
-			return this.login;
-		else
-			return super.toString();
+		String toString = super.toString();
+		if (!isNullString(name)) {
+			toString = name;
+		} else if (!isNullString(email)) {
+			toString = email;
+		} else if (!isNullString(login)) {
+			toString = login;
+		}
+
+		if (!isNullString(course) && !isNullString(startTrimester)
+				&& college.equalsIgnoreCase("infnet")) {
+			toString = toString + " / " + getCourse() + getStartTrimester();
+		} else if (!isNullString(college)) {
+			toString = toString + " " + college;
+		}
+
+		if (!isNullString(platform)) {
+			toString = toString + " (" + platform + ")";
+		}
+
+		return toString;
 	}
+
 	public int getLocalPort() {
 		return localPort;
 	}
@@ -299,7 +313,7 @@ public class Client implements Serializable {
 		this.college = college;
 	}
 	public String getStartTrimester() {
-		return startTrimester;
+		return startTrimester.substring(0, 4);
 	}
 	public void setStartTrimester(String startTrimester) {
 		this.startTrimester = startTrimester;
