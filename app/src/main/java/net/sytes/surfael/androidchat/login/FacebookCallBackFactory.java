@@ -1,4 +1,4 @@
-package net.sytes.surfael.androidchat.classes;
+package net.sytes.surfael.androidchat.login;
 
 import android.os.Bundle;
 
@@ -9,7 +9,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
-import net.sytes.surfael.androidchat.activities.LoginActivity;
+import net.sytes.surfael.androidchat.classes.CallbackFactory;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
 import net.sytes.surfael.api.model.clients.Client;
@@ -26,7 +26,7 @@ import java.util.UUID;
 /**
  * Created by Raphael on 13/02/2016.
  */
-public class H_FacebookCallBackFactory {
+public class FacebookCallBackFactory {
 
     public static FacebookCallback createCallBackForLoginScreen(final LoginActivity context) {
 
@@ -61,7 +61,7 @@ public class H_FacebookCallBackFactory {
                                     client.setName(name);
                                     try {
 //                                        client.setBirthDate(DateFormat.getDateInstance().parse(birthday));
-                                        ApiReceiveInterface apiri = H_ApiReceiver.buildApiCallbackForChatMessagesOnLoginScreenForFacebook(context, client);
+                                        ApiReceiveInterface apiri = CallbackFactory.build(context, client);
                                         ApiSendFacade.connectFacebookAsync(Session.SERVER_IP,
                                                 Session.SERVER_PORT, apiri, client, context);
                                     } catch (LocalException e) {

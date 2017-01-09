@@ -158,11 +158,11 @@ public class MessageProxy {
         this.error = error;
     }
     public String getOwnerName() {
-        if (ownerName != null)
+        if (ownerName != null && !ownerName.equalsIgnoreCase("null") && !ownerName.equalsIgnoreCase(""))
             return ownerName;
-        else if (ownerLogin != null)
+        else if (ownerLogin != null && !ownerLogin.equalsIgnoreCase("null") && !ownerLogin.equalsIgnoreCase(""))
             return ownerLogin;
-        else if (ownerEmail != null)
+        else if (ownerEmail != null && !ownerEmail.equalsIgnoreCase("null") && !ownerEmail.equalsIgnoreCase(""))
             return ownerEmail;
         else
             return null;

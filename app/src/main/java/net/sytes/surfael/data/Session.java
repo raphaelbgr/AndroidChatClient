@@ -13,13 +13,15 @@ import java.util.List;
  * Created by Raphael on 10/12/2015.
  */
 public class Session {
-    public static final String SERVER_IP = "10.10.2.147";
+    public static final String SERVER_IP = "ec2-52-67-226-170.sa-east-1.compute.amazonaws.com";
+//    public static final String SERVER_IP = "10.10.2.147";
 //    public static final String SERVER_IP = "10.5.5.132";
 //    public static final String SERVER_IP = "192.168.1.11";
 
     public static final int SERVER_PORT = 2001;
 
     private static Client currentUser;
+    public static List<MessageProxy> messageList;
 
     public static void startHawk(Context context) {
         Hawk.init(context).build();

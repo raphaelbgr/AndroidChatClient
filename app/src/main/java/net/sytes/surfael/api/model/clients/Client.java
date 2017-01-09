@@ -154,7 +154,7 @@ public class Client implements Serializable {
 		this.text = text;
 	}
 	public String getName() {
-		return name;
+		return name != null ? name : toString();
 	}
 	public void setName(String name) {
 		this.name = name;

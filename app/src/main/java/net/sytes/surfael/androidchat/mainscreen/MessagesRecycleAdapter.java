@@ -1,4 +1,4 @@
-package net.sytes.surfael.androidchat.adapters;
+package net.sytes.surfael.androidchat.mainscreen;
 
 /**
  * Created by Raphael on 24/12/2015.
@@ -16,8 +16,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import net.sytes.surfael.androidchat.R;
-import net.sytes.surfael.androidchat.classes.CircleTransform;
-import net.sytes.surfael.api.model.messages.Message;
 import net.sytes.surfael.data.MessageProxy;
 
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package net.sytes.surfael.androidchat.classes;
+package net.sytes.surfael.androidchat.mainscreen;
 
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;

@@ -1,4 +1,4 @@
-package net.sytes.surfael.androidchat.activities;
+package net.sytes.surfael.androidchat.login;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -33,12 +33,13 @@ import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import net.sytes.surfael.androidchat.R;
-import net.sytes.surfael.androidchat.classes.H_ApiReceiver;
-import net.sytes.surfael.androidchat.classes.H_FacebookCallBackFactory;
+import net.sytes.surfael.androidchat.classes.CallbackFactory;
+import net.sytes.surfael.androidchat.mainscreen.MainActivity;
 import net.sytes.surfael.api.ApiReceiveInterface;
 import net.sytes.surfael.api.ApiSendFacade;
 import net.sytes.surfael.api.model.clients.Client;
@@ -86,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         Session.startHawk(LoginActivity.this);
 
+        FirebaseApp.initializeApp(this);
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         Session.startHawk(this);
@@ -105,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             callbackManager = CallbackManager.Factory.create();
             loginButton = (LoginButton) findViewById(R.id.login_button);
             loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
-            loginButton.registerCallback(callbackManager, H_FacebookCallBackFactory.createCallBackForLoginScreen(this));
+            loginButton.registerCallback(callbackManager, FacebookCallBackFactory.createCallBackForLoginScreen(this));
 
             // Set up the login form.
             mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -139,14 +141,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-            startFirebase();
+//            startFirebase();
         }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+//        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
@@ -350,7 +352,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
-            apiri = H_ApiReceiver.buildApiCallbackForChatMessagesOnLoginScreen(lActivity, password);
+
+            Client cl = new Client();
+            cl.setPassword(password);
+
+            apiri = CallbackFactory.build(lActivity, cl);
         }
 
 
@@ -366,12 +372,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 e.printStackTrace();
                 Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 return false;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
 
                 if (!isPaused) {
-                    Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
+
                 return false;
             }
 

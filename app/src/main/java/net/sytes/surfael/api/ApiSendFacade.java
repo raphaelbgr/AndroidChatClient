@@ -1,13 +1,8 @@
 package net.sytes.surfael.api;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.Handler;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import net.sytes.surfael.androidchat.activities.LoginActivity;
-import net.sytes.surfael.androidchat.activities.MainActivity;
 import net.sytes.surfael.api.control.serverinteraction.Connect;
 import net.sytes.surfael.api.control.serverinteraction.Disconnect;
 import net.sytes.surfael.api.control.serverinteraction.Send;
@@ -21,10 +16,7 @@ import net.sytes.surfael.api.model.messages.ServerMessage;
 import net.sytes.surfael.data.Session;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.Calendar;
-
-import static android.R.id.message;
 
 public class ApiSendFacade {
 
@@ -49,7 +41,7 @@ public class ApiSendFacade {
 
 	public static void sendNormalMessageAsync(ApiReceiveInterface apiri,
 											  final EditText editText, final String message) {
-		apiBridge = apiri;
+//		apiBridge = apiri;
 
 		Thread t1 = new Thread(new Runnable() {
 			@Override

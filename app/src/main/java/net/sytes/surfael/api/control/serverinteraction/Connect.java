@@ -13,6 +13,7 @@ public class Connect {
 	public Connect(String ip, int port) throws UnknownHostException, IOException {
 		ClientStream stream = ClientStream.getInstance();
 		Socket socket = new Socket(ip, port);
+//		socket.setKeepAlive(true);
 		stream.setSock(socket);
 		Status.getInstance().setConnected(true);
 	}
@@ -22,7 +23,7 @@ public class Connect {
 		stream.setSock(new Socket(c.getTargetIp(), c.getTargetPort()));
 		Status.getInstance().setConnected(true);
 
-		//CONNECTION MESSAGE
+		// CONNECTION MESSAGE
 		stream.sendObject(c);
 	}
 }

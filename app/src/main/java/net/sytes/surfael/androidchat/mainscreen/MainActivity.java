@@ -1,6 +1,5 @@
-package net.sytes.surfael.androidchat.activities;
+package net.sytes.surfael.androidchat.mainscreen;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -39,9 +38,9 @@ import com.squareup.picasso.Picasso;
 
 import net.sytes.surfael.androidchat.R;
 
-import net.sytes.surfael.androidchat.adapters.MessagesRecycleAdapter;
+import net.sytes.surfael.androidchat.classes.CallbackFactory;
 import net.sytes.surfael.androidchat.classes.CircleTransform;
-import net.sytes.surfael.androidchat.classes.H_ApiReceiver;
+import net.sytes.surfael.androidchat.login.LoginActivity;
 import net.sytes.surfael.androidchat.util.ChatUtils;
 import net.sytes.surfael.androidchat.util.SimpleDividerItemDecoration;
 import net.sytes.surfael.api.ApiReceiveInterface;
@@ -63,12 +62,12 @@ public class MainActivity extends AppCompatActivity
     public FloatingActionButton mSendButton;
     private EditText mEditText;
     public RecyclerView mRecyclerMessages;
-    public List<MessageProxy> messageList;
     public MessagesRecycleAdapter adapterMessages;
     public boolean isPaused;
     private ApiReceiveInterface apiri;
     private boolean stored;
     protected MainActivity mContext;
+    private Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity
 
         mContext = this;
 
-        Client client = Session.getCurrentUser();
+        client = Session.getCurrentUser();
 
         setContentView(R.layout.activity_main);
 
@@ -93,8 +92,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setCheckedItem(R.id.nav_chat);
         navigationView.setNavigationItemSelectedListener(this);
 
-        messageList = Session.getHistory();
-        adapterMessages = new MessagesRecycleAdapter(messageList, this, getSupportFragmentManager());
+        Session.messageList = Session.getHistory();
+        adapterMessages = new MessagesRecycleAdapter(Session.messageList, this, getSupportFragmentManager());
 
         View headerView = navigationView.getHeaderView(0);
 
@@ -206,7 +205,7 @@ public class MainActivity extends AppCompatActivity
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, "Deslogado com sucesso!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Successfully logged out!", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, "Deslogado na força bruta.",Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Logged out by force.",Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -318,8 +317,8 @@ public class MainActivity extends AppCompatActivity
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
 
-        messageList = Session.getHistory();
-        adapterMessages = new MessagesRecycleAdapter(messageList, this, getSupportFragmentManager());
+        Session.messageList = Session.getHistory();
+        adapterMessages = new MessagesRecycleAdapter(Session.messageList, this, getSupportFragmentManager());
         mRecyclerMessages.setAdapter(adapterMessages);
         runOnUiThread(new Runnable() {
             public void run() {
@@ -343,7 +342,7 @@ public class MainActivity extends AppCompatActivity
 
     private void login() {
         try {
-            apiri = H_ApiReceiver.buildApiCallbackForChatMessagesWithoutLogin(this);
+            apiri = CallbackFactory.build(this, client);
 
             ApiSendFacade.overwriteListener(apiri);
             if (!Status.getInstance().isConnected())

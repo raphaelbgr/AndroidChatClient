@@ -5,6 +5,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
+import net.sytes.surfael.androidchat.mainscreen.MoveUpwardBehavior;
+
 /**
  * Created by Raphael on 17/02/2016.
  */
