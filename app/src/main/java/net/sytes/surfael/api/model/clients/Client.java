@@ -94,7 +94,7 @@ public class Client implements Serializable {
 		this.password = password;
 	}
 	public Client(String login, String password, boolean crypt) {
-		if (login.contains("@"))
+		if (login != null && login.contains("@"))
 		{
 			this.email = login;
 		} else {

@@ -87,10 +87,12 @@ public class ApiSendFacade {
 							t1.start();
 							Status.getInstance().setConnected(true);
 							requestHistory(5000);
-							apiBridge.onConnected();
+							if (apiBridge != null)
+								apiBridge.onConnected();
 						} catch (Exception e) {
 							e.printStackTrace();
-							apiBridge.onConnectionError(e);
+							if (apiBridge != null)
+								apiBridge.onConnectionError(e);
 						}
 					}
 				}

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "720870015926",
+    "firebase_url": "https://boreal-rain-87818.firebaseio.com",
+    "project_id": "boreal-rain-87818",
+    "storage_bucket": "boreal-rain-87818.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720870015926:android:206be78f4dffbfc7",
+        "android_client_info": {
+          "package_name": "net.sytes.surfael.androidchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "720870015926-60k6gpph99ta7k9rj6ue6ehd1nj6mig3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.sytes.surfael.androidchat",
+            "certificate_hash": "379DC0E868A38D5BB57D2C46D3155AED4C283B31"
+          }
+        },
+        {
+          "client_id": "720870015926-oid9mbgkq9jgjcjtsvh887u2p702stn8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmf0aVuWjHBsmRQFtkqC7XedgRv8_d87o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "720870015926-oid9mbgkq9jgjcjtsvh887u2p702stn8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

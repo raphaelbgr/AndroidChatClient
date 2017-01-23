@@ -290,7 +290,8 @@ public class MainActivity extends AppCompatActivity
             RemoteViews contentView = notification.contentView;
 //            RemoteViews bigContentView = notification.bigContentView;
 
-            Picasso.with(mContext).load(m.getSenderPhotoUrl()).transform(new CircleTransform()).resize(1024, 1024).into(contentView, iconId, 1, notification);
+            if (contentView != null)
+                Picasso.with(mContext).load(m.getSenderPhotoUrl()).transform(new CircleTransform()).resize(1024, 1024).into(contentView, iconId, 1, notification);
 //            Picasso.with(mContext).load(m.getSenderPhotoUrl()).into(bigContentView, bigIconId, 1, notification);
         }
 
@@ -345,7 +346,8 @@ public class MainActivity extends AppCompatActivity
             apiri = CallbackFactory.build(this, client);
 
             ApiSendFacade.overwriteListener(apiri);
-            if (!Status.getInstance().isConnected())
+            if (Status.getInstance().isConnected())
+//            if (!Status.getInstance().isConnected())
                 ApiSendFacade.aSyncConnect(Session.SERVER_IP, Session.SERVER_PORT, apiri,
                         Session.getCurrentUser().getEmail(), Session.getCurrentUser().getMD5Password(), false);
         } catch (LocalException e) {
@@ -353,7 +355,7 @@ public class MainActivity extends AppCompatActivity
             if (!isPaused) {
                 Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             if (!isPaused) {
                 Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
